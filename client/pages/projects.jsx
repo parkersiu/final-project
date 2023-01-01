@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/navbar';
 import Breadcrumb from '../components/breadcrumb';
+import PageTitle from '../components/pagetitle';
 
 class Form extends React.Component {
   constructor(props) {
@@ -69,6 +70,7 @@ export default function Projects(props) {
     <div>
       <Navbar />
       <Breadcrumb />
+      <PageTitle />
       <Form />
     </div>
   );
