@@ -43,6 +43,25 @@ app.post('/api/projects', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/milestones', (req, res, next) => {
+  const { milestoneName, projectId } = req.body;
+  if (!milestoneName) {
+    throw new ClientError(400, 'milestoneName is a required field');
+  }
+  const sql = `
+  insert into "milestones" ("milestoneName", "projectId")
+  values ($1, $2)
+  returning *
+  `;
+  const params = [milestoneName, projectId];
+  db.query(sql, params)
+    .then(result => {
+      const [newMilestone] = result.rows;
+      res.status(201).json(newMilestone);
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
