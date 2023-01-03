@@ -81,11 +81,13 @@ class MilestoneForm extends React.Component {
         .then(res => res.json())
         .catch(err => console.error('Error:', err));
     }
-    const milestoneName = this.state.milestoneName;
-    const projectId = this.state.projectId;
-    const newMilestone = { milestoneName, projectId };
     event.preventDefault();
-    addMilestone(newMilestone);
+    const projectId = this.state.projectId;
+    for (let i = 0; i < this.state.inputValues.length; i++) {
+      const milestoneName = this.state.inputValues[i].milestoneName;
+      const newMilestone = { milestoneName, projectId };
+      addMilestone(newMilestone);
+    }
   }
 
   render() {
