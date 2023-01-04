@@ -29,6 +29,9 @@ app.post('/api/projects', (req, res, next) => {
   if (!title || !description || !userId) {
     throw new ClientError(400, 'title, description, and userId are required fields');
   }
+  if (!Number.isInteger(userId) || userId < 0) {
+    throw new ClientError(400, 'userId must be a positive integer');
+  }
   const sql = `
   insert into "projects" ("title", "description", "userId")
   values ($1, $2, $3)
@@ -45,8 +48,11 @@ app.post('/api/projects', (req, res, next) => {
 
 app.post('/api/milestones', (req, res, next) => {
   const { milestoneName, projectId } = req.body;
-  if (!milestoneName) {
-    throw new ClientError(400, 'milestoneName is a required field');
+  if (!milestoneName || !projectId) {
+    throw new ClientError(400, 'milestoneName and projectId are required fields');
+  }
+  if (!Number.isInteger(projectId) || projectId < 0) {
+    throw new ClientError(400, 'projectId must be a positive integer');
   }
   const sql = `
   insert into "milestones" ("milestoneName", "projectId")
@@ -64,8 +70,11 @@ app.post('/api/milestones', (req, res, next) => {
 
 app.post('/api/tasks', (req, res, next) => {
   const { taskName, projectId } = req.body;
-  if (!taskName) {
-    throw new ClientError(400, 'taskName is a required field');
+  if (!taskName || !projectId) {
+    throw new ClientError(400, 'taskName and projectId are required fields');
+  }
+  if (!Number.isInteger(projectId) || projectId < 0) {
+    throw new ClientError(400, 'projectId must be a positive integer');
   }
   const sql = `
   insert into "tasks" ("taskName", "projectId")
