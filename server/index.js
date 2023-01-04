@@ -62,6 +62,25 @@ app.post('/api/milestones', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/tasks', (req, res, next) => {
+  const { taskName, projectId } = req.body;
+  if (!taskName) {
+    throw new ClientError(400, 'taskName is a required field');
+  }
+  const sql = `
+  insert into "tasks" ("taskName", "projectId")
+  values ($1, $2)
+  returning *
+  `;
+  const params = [taskName, projectId];
+  db.query(sql, params)
+    .then(result => {
+      const [newTask] = result.rows;
+      res.status(201).json(newTask);
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
