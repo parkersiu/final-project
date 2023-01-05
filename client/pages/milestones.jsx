@@ -9,8 +9,8 @@ class MilestoneForm extends React.Component {
     this.state = {
       milestoneName: '',
       projectId: 1,
-      inputCounter: 3,
-      inputValues: [{
+      milestoneCounter: 3,
+      milestoneValues: [{
         milestoneName: ''
       }, {
         milestoneName: ''
@@ -26,47 +26,49 @@ class MilestoneForm extends React.Component {
   }
 
   handleRemoveInput(event) {
-    let inputCounter = this.state.inputCounter;
-    inputCounter--;
-    const inputs = this.state.inputValues;
+    let milestoneCounter = this.state.milestoneCounter;
+    milestoneCounter--;
+    const inputs = this.state.milestoneValues;
     const i = parseInt(event.target.getAttribute('id'));
     inputs.splice(i, 1);
     this.setState({
-      inputCounter,
-      inputValues: inputs
+      milestoneCounter,
+      milestoneValues: inputs
     });
   }
 
   handleAddInput(event) {
-    let inputCounter = this.state.inputCounter;
-    const inputValues = this.state.inputValues;
-    inputValues.push({ milestoneName: '' });
-    inputCounter++;
+    let milestoneCounter = this.state.milestoneCounter;
+    const milestoneValues = this.state.milestoneValues;
+    milestoneValues.push({ milestoneName: '' });
+    milestoneCounter++;
     this.setState({
-      inputCounter,
-      inputValues
+      milestoneCounter,
+      milestoneValues
     });
   }
 
   handleInputChange(event) {
-    const inputs = this.state.inputValues;
+    const inputs = this.state.milestoneValues;
     const value = event.target.value;
     const i = event.target.name;
     inputs[i].milestoneName = value;
-    this.setState({ inputValues: inputs });
+    this.setState({ milestoneValues: inputs });
   }
 
   inputsLoop() {
     const inputs = [];
-    for (let i = 0; i < this.state.inputCounter; i++) {
-      inputs.push(<div className='input-group mb-3' key={i}>
-        <span className='input-group-text'>{i + 1}</span>
-        <input className='form-control' type="text" placeholder='Enter a milestone'
-          name={i} value={this.state.inputValues[i].milestoneName} onChange={this.handleInputChange} />
-        <span className='input-group-text'>
-          <i className="fa-solid fa-x" id={i} onClick={this.handleRemoveInput} />
-        </span>
-      </div>);
+    for (let i = 0; i < this.state.milestoneCounter; i++) {
+      inputs.push(
+        <div className='input-group mb-3' key={i}>
+          <span className='input-group-text'>{i + 1}</span>
+          <input className='form-control' type="text" placeholder='Enter a milestone'
+          name={i} value={this.state.milestoneValues[i].milestoneName} onChange={this.handleInputChange} />
+          <span className='input-group-text'>
+            <i className="fa-solid fa-x" id={i} onClick={this.handleRemoveInput} />
+          </span>
+        </div>
+      );
     }
     return inputs;
   }
@@ -83,8 +85,8 @@ class MilestoneForm extends React.Component {
     }
     event.preventDefault();
     const projectId = this.state.projectId;
-    for (let i = 0; i < this.state.inputValues.length; i++) {
-      const milestoneName = this.state.inputValues[i].milestoneName;
+    for (let i = 0; i < this.state.milestoneValues.length; i++) {
+      const milestoneName = this.state.milestoneValues[i].milestoneName;
       const newMilestone = { milestoneName, projectId };
       addMilestone(newMilestone);
     }
@@ -114,7 +116,7 @@ class MilestoneForm extends React.Component {
   }
 }
 
-export default function Projects(props) {
+export default function Milestones(props) {
   return (
     <div>
       <Navbar />

@@ -7,125 +7,124 @@ class ProjectView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      milestoneName: '',
-      projectId: 1,
-      inputCounter: 3,
-      inputValues: [{
-        milestoneName: ''
+      pageTitle: 'Project Name',
+      taskCounter: 2,
+      milestoneCounter: 3,
+      taskValues: [
+        {
+          taskName: 'Task 1',
+          isCompleted: false,
+          className: 'form-check-label stretched-link',
+          projectId: 1,
+          key: 1
+        },
+        {
+          taskName: 'Task 2',
+          isCompleted: false,
+          className: 'form-check-label stretched-link',
+          projectId: 1,
+          key: 2
+        }
+      ],
+      milestoneValues: [{
+        milestoneName: 'Milestone 1'
       }, {
-        milestoneName: ''
+        milestoneName: 'Milestone 2'
       }, {
-        milestoneName: ''
+        milestoneName: 'Milestone 3'
       }]
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleRemoveInput = this.handleRemoveInput.bind(this);
-    this.handleAddInput = this.handleAddInput.bind(this);
-    this.inputsLoop = this.inputsLoop.bind(this);
+    this.handleAddTask = this.handleAddTask.bind(this);
+    this.tasksLoop = this.tasksLoop.bind(this);
+    this.handleComplete = this.handleComplete.bind(this);
+    this.cardsLoop = this.cardsLoop.bind(this);
   }
 
-  handleRemoveInput(event) {
-    let inputCounter = this.state.inputCounter;
-    inputCounter--;
-    const inputs = this.state.inputValues;
+  handleAddTask(event) {
+    let taskCounter = this.state.taskCounter;
+    const taskValues = this.state.taskValues;
+    taskValues.push({ taskName: '', isCompleted: false, className: 'form-check-label stretched-link', projectId: 1 });
+    taskCounter++;
+    this.setState({
+      taskCounter,
+      taskValues
+    });
+  }
+
+  handleComplete(event) {
+    const taskValues = this.state.taskValues;
     const i = parseInt(event.target.getAttribute('id'));
-    inputs.splice(i, 1);
+    const complete = taskValues[i].isCompleted;
+    if (complete) {
+      taskValues[i].isCompleted = !taskValues[i].isCompleted;
+      taskValues[i].className = 'form-check-label stretched-link';
+    }
+    if (!complete) {
+      taskValues[i].isCompleted = !taskValues[i].isCompleted;
+      taskValues[i].className = 'form-check-label stretched-link strike';
+    }
     this.setState({
-      inputCounter,
-      inputValues: inputs
+      taskValues
     });
   }
 
-  handleAddInput(event) {
-    let inputCounter = this.state.inputCounter;
-    const inputValues = this.state.inputValues;
-    inputValues.push({ milestoneName: '' });
-    inputCounter++;
-    this.setState({
-      inputCounter,
-      inputValues
-    });
+  tasksLoop() {
+    const tasks = [];
+    for (let i = 0; i < this.state.taskValues.length; i++) {
+      const taskName = this.state.taskValues[i].taskName;
+      const className = this.state.taskValues[i].className;
+      const key = this.state.taskValues[i].key;
+      tasks.push(
+        <li className="list-group-item" key={key}>
+          <input className="form-check-input me-1" type="checkbox" value={taskName} id={i} onChange={this.handleComplete} />
+          <label className={className} htmlFor={i}>{taskName}</label>
+          <i className="fa-solid fa-ellipsis float-end mt-1" />
+        </li>
+      );
+    }
+    return tasks;
   }
 
-  handleInputChange(event) {
-    const inputs = this.state.inputValues;
-    const value = event.target.value;
-    const i = event.target.name;
-    inputs[i].milestoneName = value;
-    this.setState({ inputValues: inputs });
-  }
-
-  inputsLoop() {
-    const inputs = [];
-    for (let i = 0; i < this.state.inputCounter; i++) {
-      inputs.push(<div className='input-group mb-3' key={i}>
-        <span className='input-group-text'>{i + 1}</span>
-        <input className='form-control' type="text" placeholder='Enter a milestone'
-          name={i} value={this.state.inputValues[i].milestoneName} onChange={this.handleInputChange} />
-        <span className='input-group-text'>
-          <i className="fa-solid fa-x" id={i} onClick={this.handleRemoveInput} />
-        </span>
-      </div>);
+  cardsLoop() {
+    const cards = [];
+    for (let i = 0; i < this.state.milestoneValues.length; i++) {
+      const milestoneName = this.state.milestoneValues[i].milestoneName;
+      cards.push(
+        <div className='col'>
+          <div className='card text-bg-light mb-3 mt-3'>
+            <div className='card-header'>{milestoneName}</div>
+            <ul className='list-group list-group-flush'>
+              {this.tasksLoop()}
+              <li className='list-group-item' key={i}>Add a task <i className="fa-solid fa-plus float-end mt-1" /></li>
+            </ul>
+          </div>
+        </div>
+      );
     }
-    return inputs;
-  }
-
-  handleSubmit(event) {
-    function addMilestone(newMilestone) {
-      fetch('/api/milestones', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMilestone)
-      })
-        .then(res => res.json())
-        .catch(err => console.error('Error:', err));
-    }
-    event.preventDefault();
-    const projectId = this.state.projectId;
-    for (let i = 0; i < this.state.inputValues.length; i++) {
-      const milestoneName = this.state.inputValues[i].milestoneName;
-      const newMilestone = { milestoneName, projectId };
-      addMilestone(newMilestone);
-    }
+    return cards;
   }
 
   render() {
     return (
-      <div className='container'>
-        <div className='row'>
-          <div className='col' />
-          <div className='col'>
-            <div className='card text-bg-light mb-3 mt-3'>
-              <div className='card-header'>Milestone 1</div>
-              <ul className='list-group list-group-flush'>
-                <li className="list-group-item">
-                  <input className="form-check-input me-1" type="checkbox" value="" />
-                  <label className="form-check-label stretched-link" htmlFor="firstCheckboxStretched">Task 1 </label>
-                  <i className="fa-solid fa-ellipsis float-end mt-1" />
-                </li>
-                <li className="list-group-item">
-                  <input className="form-check-input me-1" type="checkbox" value="" />
-                  <label className="form-check-label stretched-link" htmlFor="firstCheckboxStretched">Task 2 </label>
-                  <i className="fa-solid fa-ellipsis float-end mt-1" />
-                </li>
-                <li className='list-group-item'>Add a task <i className="fa-solid fa-plus float-end mt-1" /></li>
-              </ul>
-            </div>
+      <div>
+        <PageTitle pageTitle={this.state.pageTitle} />
+        <div className='container'>
+          <div className='row'>
+            <div className='col' />
+            {this.cardsLoop()}
+            <div className='col' />
           </div>
-          <div className='col' />
         </div>
       </div>
     );
   }
 }
 
-export default function Projects(props) {
+export default function View(props) {
   return (
     <div>
       <Navbar />
       <Breadcrumb />
-      <PageTitle />
       <ProjectView />
     </div>
   );
