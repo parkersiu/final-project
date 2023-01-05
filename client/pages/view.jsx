@@ -43,7 +43,7 @@ class ProjectView extends React.Component {
   handleAddTask(event) {
     let taskCounter = this.state.taskCounter;
     const taskValues = this.state.taskValues;
-    taskValues.push({ taskName: '', isCompleted: false, className: 'form-check-label stretched-link', projectId: 1 });
+    taskValues.push({ taskName: 'New Task', isCompleted: false, className: 'form-check-label stretched-link', projectId: 1 });
     taskCounter++;
     this.setState({
       taskCounter,
@@ -95,7 +95,7 @@ class ProjectView extends React.Component {
             <div className='card-header'>{milestoneName}</div>
             <ul className='list-group list-group-flush'>
               {this.tasksLoop()}
-              <li className='list-group-item' key={i}>Add a task <i className="fa-solid fa-plus float-end mt-1" /></li>
+              <li className='list-group-item' key={i}>Add a task <i className="fa-solid fa-plus float-end mt-1" onClick={this.handleAddTask} /></li>
             </ul>
           </div>
         </div>
@@ -109,7 +109,7 @@ class ProjectView extends React.Component {
       <div>
         <PageTitle pageTitle={this.state.pageTitle} />
         <div className='container'>
-          <div className='row'>
+          <div className='row d-flex flex-nowrap overflow-x-auto'>
             <div className='col' />
             {this.cardsLoop()}
             <div className='col' />
