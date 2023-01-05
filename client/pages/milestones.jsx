@@ -7,6 +7,7 @@ class MilestoneForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      pageTitle: 'Create a project',
       milestoneName: '',
       projectId: 1,
       milestoneCounter: 3,
@@ -94,22 +95,25 @@ class MilestoneForm extends React.Component {
 
   render() {
     return (
-      <div className='container'>
-        <div className='row'>
-          <div className='col' />
-          <div className='col-6 mt-2 ms-5 mb-2'>Milestones:</div>
-          <div className='col' />
-        </div>
-        <div className='row'>
-          <div className='col' />
-          <div className='col'>
-            <form onSubmit={this.handleSubmit}>
-              {this.inputsLoop()}
-              <i className="fa-solid fa-plus mt-2 ms-2" onClick={this.handleAddInput} />
-              <button className='btn btn-primary float-end' type='submit'>Done</button>
-            </form>
+      <div>
+        <PageTitle pageTitle={this.state.pageTitle} />
+        <div className='container'>
+          <div className='row'>
+            <div className='col' />
+            <div className='col-6 mt-2 ms-5 mb-2'>Milestones:</div>
+            <div className='col' />
           </div>
-          <div className='col' />
+          <div className='row'>
+            <div className='col' />
+            <div className='col'>
+              <form onSubmit={this.handleSubmit}>
+                {this.inputsLoop()}
+                <i className="fa-solid fa-plus mt-2 ms-2" onClick={this.handleAddInput} />
+                <button className='btn btn-primary float-end' type='submit'>Done</button>
+              </form>
+            </div>
+            <div className='col' />
+          </div>
         </div>
       </div>
     );
@@ -121,7 +125,6 @@ export default function Milestones(props) {
     <div>
       <Navbar />
       <Breadcrumb />
-      <PageTitle />
       <MilestoneForm />
     </div>
   );

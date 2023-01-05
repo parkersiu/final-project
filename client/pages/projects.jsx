@@ -7,6 +7,7 @@ class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      pageTitle: 'Create a project',
       title: '',
       description: '',
       userId: 1
@@ -44,21 +45,24 @@ class Form extends React.Component {
 
   render() {
     return (
-      <div className='container'>
-        <div className='row'>
-          <div className='col' />
-          <div className='col-6'>
-            <form onSubmit={this.handleSubmit}>
-              <label className='h3 form-label mt-3 mb-3' htmlFor='title'>Project Name</label>
-              <input className='form-control mb-3' type="text" placeholder='Title'
+      <div>
+        <PageTitle pageTitle={this.state.pageTitle}/>
+        <div className='container'>
+          <div className='row'>
+            <div className='col' />
+            <div className='col-6'>
+              <form onSubmit={this.handleSubmit}>
+                <label className='h3 form-label mt-3 mb-3' htmlFor='title'>Project Name</label>
+                <input className='form-control mb-3' type="text" placeholder='Title'
               id='title' onChange={this.handleTitle} />
-              <label className='h3 form-label mb-3' htmlFor='description'>Description</label>
-              <textarea className='form-control mb-3' placeholder='Brief description
+                <label className='h3 form-label mb-3' htmlFor='description'>Description</label>
+                <textarea className='form-control mb-3' placeholder='Brief description
       of this project' id='description' rows='3' onChange={this.handleDescription} />
-              <button className='btn btn-primary float-end' type='submit'>Next</button>
-            </form>
+                <button className='btn btn-primary float-end' type='submit'>Next</button>
+              </form>
+            </div>
+            <div className='col' />
           </div>
-          <div className='col' />
         </div>
       </div>
     );
@@ -70,7 +74,6 @@ export default function Projects(props) {
     <div>
       <Navbar />
       <Breadcrumb />
-      <PageTitle />
       <Form />
     </div>
   );
