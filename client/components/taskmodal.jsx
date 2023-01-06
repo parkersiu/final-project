@@ -7,7 +7,7 @@ export default function TaskModal(props) {
         <div className="modal-content">
           <div className="modal-header">
             <h1 className="modal-title fs-4" id="taskModalLabel">Edit Task:</h1>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+            <i className="fa-solid fa-trash pe-2" onClick={props.delete} data-index={props.dataIndex} data-bs-dismiss="modal" />
           </div>
           <form onSubmit={props.submit}>
             <div className='modal-body'>

@@ -20,8 +20,55 @@ app.use(jsonMiddleware);
 
 app.use(staticMiddleware);
 
-app.get('/api/hello', (req, res) => {
-  res.json({ hello: 'world' });
+app.get('/api/tasks/:projectId', (req, res, next) => {
+  const projectId = Number(req.params.projectId);
+  if (!projectId) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+    select "taskId",
+           "taskName",
+           "isCompleted",
+           "projectId",
+           "milestoneId",
+           "isDeleted"
+      from "tasks"
+     where "projectId" = $1
+  `;
+  const params = [projectId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find product with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
+app.get('/api/milestones/:projectId', (req, res, next) => {
+  const projectId = Number(req.params.projectId);
+  if (!projectId) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+    select "milestoneId",
+           "milestoneName",
+           "dueDate",
+           "projectId",
+           "isDeleted"
+      from "milestones"
+     where "projectId" = $1
+  `;
+  const params = [projectId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find product with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
 });
 
 app.post('/api/projects', (req, res, next) => {

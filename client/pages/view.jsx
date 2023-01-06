@@ -10,7 +10,7 @@ class ProjectView extends React.Component {
     super(props);
     this.state = {
       pageTitle: 'Project Name',
-      milestoneCounter: 3,
+      projectId: 1,
       currentTask: {
         taskName: '',
         taskIndex: 1
@@ -75,12 +75,22 @@ class ProjectView extends React.Component {
     this.handleEditTask = this.handleEditTask.bind(this);
     this.handleUpdateTask = this.handleUpdateTask.bind(this);
     this.handleSubmitTask = this.handleSubmitTask.bind(this);
+    this.handleRemoveTask = this.handleRemoveTask.bind(this);
   }
 
   handleAddTask(event) {
     const taskValues = this.state.taskValues;
     const eventId = parseInt(event.target.id);
-    taskValues.push({ taskName: 'New Task', isCompleted: false, className: 'form-check-label stretched-link', projectId: 1, milestoneId: eventId });
+    taskValues.push({ taskName: 'New Task', isCompleted: false, className: 'form-check-label', projectId: 1, milestoneId: eventId });
+    this.setState({
+      taskValues
+    });
+  }
+
+  handleRemoveTask(event) {
+    const taskValues = this.state.taskValues;
+    const index = parseInt(event.target.getAttribute('data-index'));
+    taskValues.splice(index, 1);
     this.setState({
       taskValues
     });
@@ -129,11 +139,41 @@ class ProjectView extends React.Component {
     });
   }
 
+  getTasks(projectId) {
+    fetch(`api/tasks/${projectId}`, {
+      method: 'GET',
+      headers: { 'Conent-Type': 'application/json' }
+    })
+      .then(res => res.json())
+      .then(data => this.setState({
+        taskValues: data
+      }))
+      .catch(err => console.error('Error:', err));
+  }
+
+  getMilestones(projectId) {
+    fetch(`api/milestones/${projectId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(res => res.json())
+      .then(data => this.setState({
+        milestoneValues: data
+      }))
+      .catch(err => console.error('Error:', err));
+  }
+
+  componentDidMount() {
+    const projectId = this.state.projectId;
+    this.getMilestones(projectId);
+    this.getTasks(projectId);
+  }
+
   render() {
     return (
       <div>
         <TaskModal taskName={this.state.currentTask.taskName} updateTask={this.handleUpdateTask}
-        submit={this.handleSubmitTask} />
+        submit={this.handleSubmitTask} delete={this.handleRemoveTask} dataIndex={this.state.currentTask.taskIndex} />
         <PageTitle pageTitle={this.state.pageTitle} />
         <div className='container'>
           <div className='row d-flex flex-nowrap overflow-x-auto'>
