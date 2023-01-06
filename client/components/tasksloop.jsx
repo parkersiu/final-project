@@ -12,7 +12,9 @@ export default function TasksLoop(props) {
         <li className="list-group-item">
           <input className="form-check-input me-1" type="checkbox" value={taskName} id={i} onChange={props.change} />
           <label className={className} htmlFor={i}>{taskName}</label>
-          <a data-bs-toggle="modal" data-bs-target='#exampleModal'><i className="fa-solid fa-ellipsis float-end mt-1" /></a>
+          <a data-bs-toggle="modal" data-bs-target='#taskModal'>
+            <i id={taskName} data-index={i} className="fa-solid fa-ellipsis float-end mt-1" onClick={props.edit} />
+          </a>
         </li>
       );
     }

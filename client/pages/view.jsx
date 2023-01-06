@@ -10,48 +10,51 @@ class ProjectView extends React.Component {
     super(props);
     this.state = {
       pageTitle: 'Project Name',
-      taskCounter: 2,
       milestoneCounter: 3,
+      currentTask: {
+        taskName: '',
+        taskIndex: 1
+      },
       taskValues: [
         {
           taskName: 'Task 1',
           isCompleted: false,
-          className: 'form-check-label stretched-link',
+          className: 'form-check-label',
           projectId: 1,
           milestoneId: 1
         },
         {
           taskName: 'Task 2',
           isCompleted: false,
-          className: 'form-check-label stretched-link',
+          className: 'form-check-label',
           projectId: 1,
           milestoneId: 1
         },
         {
           taskName: 'Task 1',
           isCompleted: false,
-          className: 'form-check-label stretched-link',
+          className: 'form-check-label',
           projectId: 1,
           milestoneId: 2
         },
         {
           taskName: 'Task 2',
           isCompleted: false,
-          className: 'form-check-label stretched-link',
+          className: 'form-check-label',
           projectId: 1,
           milestoneId: 2
         },
         {
           taskName: 'Task 1',
           isCompleted: false,
-          className: 'form-check-label stretched-link',
+          className: 'form-check-label',
           projectId: 1,
           milestoneId: 3
         },
         {
           taskName: 'Task 2',
           isCompleted: false,
-          className: 'form-check-label stretched-link',
+          className: 'form-check-label',
           projectId: 1,
           milestoneId: 3
         }
@@ -69,17 +72,27 @@ class ProjectView extends React.Component {
     };
     this.handleAddTask = this.handleAddTask.bind(this);
     this.handleComplete = this.handleComplete.bind(this);
+    this.handleEditTask = this.handleEditTask.bind(this);
+    this.handleUpdateTask = this.handleUpdateTask.bind(this);
+    this.handleSubmitTask = this.handleSubmitTask.bind(this);
   }
 
   handleAddTask(event) {
-    let taskCounter = this.state.taskCounter;
     const taskValues = this.state.taskValues;
     const eventId = parseInt(event.target.id);
     taskValues.push({ taskName: 'New Task', isCompleted: false, className: 'form-check-label stretched-link', projectId: 1, milestoneId: eventId });
-    taskCounter++;
     this.setState({
-      taskCounter,
       taskValues
+    });
+  }
+
+  handleEditTask(event) {
+    const currentTask = this.state.currentTask;
+    const index = parseInt(event.target.getAttribute('data-index'));
+    currentTask.taskName = event.target.id;
+    currentTask.taskIndex = index;
+    this.setState({
+      currentTask
     });
   }
 
@@ -100,14 +113,34 @@ class ProjectView extends React.Component {
     });
   }
 
+  handleUpdateTask(event) {
+    const currentTask = this.state.currentTask;
+    currentTask.taskName = event.target.value;
+    this.setState({ currentTask });
+  }
+
+  handleSubmitTask(event) {
+    const taskValues = this.state.taskValues;
+    const index = this.state.currentTask.taskIndex;
+    event.preventDefault();
+    taskValues[index].taskName = this.state.currentTask.taskName;
+    this.setState({
+      taskValues
+    });
+  }
+
   render() {
     return (
       <div>
+        <TaskModal taskName={this.state.currentTask.taskName} updateTask={this.handleUpdateTask}
+        submit={this.handleSubmitTask} />
         <PageTitle pageTitle={this.state.pageTitle} />
         <div className='container'>
           <div className='row d-flex flex-nowrap overflow-x-auto'>
             <div className='col' />
-            <CardsLoop milestoneValues={this.state.milestoneValues} taskValues={this.state.taskValues} click={this.handleAddTask} change={this.handleComplete} />
+            <CardsLoop milestoneValues={this.state.milestoneValues} taskValues={this.state.taskValues}
+            click={this.handleAddTask} change={this.handleComplete} edit={this.handleEditTask}
+            currentTask={this.state.currentTask} />
             <div className='col' />
           </div>
         </div>
@@ -119,7 +152,6 @@ class ProjectView extends React.Component {
 export default function View(props) {
   return (
     <div>
-      <TaskModal />
       <Navbar />
       <Breadcrumb />
       <ProjectView />
