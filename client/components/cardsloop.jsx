@@ -13,7 +13,8 @@ export default function CardsLoop(props) {
           <div className='card-header'>{milestoneName}</div>
           <ul className='list-group list-group-flush'>
             <TasksLoop {...props} referenceId={referenceId} />
-            <li className='list-group-item'>Add a task <i className="fa-solid fa-plus float-end mt-1" id={referenceId} onClick={props.click} /></li>
+            <li className='list-group-item'>Add a task <i className="fa-solid fa-plus float-end mt-1"
+              id={referenceId} onClick={props.click} data-bs-toggle="modal" data-bs-target='#taskModal' /></li>
           </ul>
         </div>
       </div>

@@ -13,52 +13,10 @@ class ProjectView extends React.Component {
       projectId: 1,
       currentTask: {
         taskName: '',
-        taskIndex: 1
+        taskIndex: -1,
+        newTask: false
       },
-      taskValues: [
-        {
-          taskName: 'Task 1',
-          isCompleted: false,
-          className: 'form-check-label',
-          projectId: 1,
-          milestoneId: 1
-        },
-        {
-          taskName: 'Task 2',
-          isCompleted: false,
-          className: 'form-check-label',
-          projectId: 1,
-          milestoneId: 1
-        },
-        {
-          taskName: 'Task 1',
-          isCompleted: false,
-          className: 'form-check-label',
-          projectId: 1,
-          milestoneId: 2
-        },
-        {
-          taskName: 'Task 2',
-          isCompleted: false,
-          className: 'form-check-label',
-          projectId: 1,
-          milestoneId: 2
-        },
-        {
-          taskName: 'Task 1',
-          isCompleted: false,
-          className: 'form-check-label',
-          projectId: 1,
-          milestoneId: 3
-        },
-        {
-          taskName: 'Task 2',
-          isCompleted: false,
-          className: 'form-check-label',
-          projectId: 1,
-          milestoneId: 3
-        }
-      ],
+      taskValues: [],
       milestoneValues: [{
         milestoneName: 'Milestone 1',
         milestoneId: 1
@@ -80,9 +38,14 @@ class ProjectView extends React.Component {
 
   handleAddTask(event) {
     const taskValues = this.state.taskValues;
+    const currentTask = this.state.currentTask;
+    currentTask.taskName = 'New Task';
+    currentTask.newTask = true;
     const eventId = parseInt(event.target.id);
     taskValues.push({ taskName: 'New Task', isCompleted: false, className: 'form-check-label', projectId: 1, milestoneId: eventId });
+    currentTask.taskIndex = taskValues.length - 1;
     this.setState({
+      currentTask,
       taskValues
     });
   }
@@ -101,6 +64,7 @@ class ProjectView extends React.Component {
     const index = parseInt(event.target.getAttribute('data-index'));
     currentTask.taskName = event.target.id;
     currentTask.taskIndex = index;
+    currentTask.newTask = false;
     this.setState({
       currentTask
     });
@@ -125,24 +89,25 @@ class ProjectView extends React.Component {
 
   handleUpdateTask(event) {
     const currentTask = this.state.currentTask;
+    const taskValues = this.state.taskValues;
+    taskValues[currentTask.taskIndex].taskName = event.target.value;
     currentTask.taskName = event.target.value;
-    this.setState({ currentTask });
+    this.setState({ currentTask, taskValues });
   }
 
   handleSubmitTask(event) {
-    const taskValues = this.state.taskValues;
-    const index = this.state.currentTask.taskIndex;
     event.preventDefault();
-    taskValues[index].taskName = this.state.currentTask.taskName;
-    this.setState({
-      taskValues
-    });
+    const currentTask = this.state.currentTask;
+    const newTask = this.state.taskValues[currentTask.taskIndex];
+    if (currentTask.newTask) {
+      this.postTasks(newTask);
+    }
   }
 
   getTasks(projectId) {
     fetch(`api/tasks/${projectId}`, {
       method: 'GET',
-      headers: { 'Conent-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' }
     })
       .then(res => res.json())
       .then(data => this.setState({
@@ -160,6 +125,16 @@ class ProjectView extends React.Component {
       .then(data => this.setState({
         milestoneValues: data
       }))
+      .catch(err => console.error('Error:', err));
+  }
+
+  postTasks(newTasks) {
+    fetch('/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newTasks)
+    })
+      .then(res => res.json())
       .catch(err => console.error('Error:', err));
   }
 

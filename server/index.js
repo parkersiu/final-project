@@ -95,6 +95,7 @@ app.post('/api/projects', (req, res, next) => {
 
 app.post('/api/milestones', (req, res, next) => {
   const { milestoneName, projectId } = req.body;
+  parseInt(projectId);
   if (!milestoneName || !projectId) {
     throw new ClientError(400, 'milestoneName and projectId are required fields');
   }
@@ -116,7 +117,9 @@ app.post('/api/milestones', (req, res, next) => {
 });
 
 app.post('/api/tasks', (req, res, next) => {
-  const { taskName, projectId } = req.body;
+  const { taskName } = req.body;
+  const projectId = Number(req.body.projectId);
+  const milestoneId = Number(req.body.milestoneId);
   if (!taskName || !projectId) {
     throw new ClientError(400, 'taskName and projectId are required fields');
   }
@@ -124,11 +127,11 @@ app.post('/api/tasks', (req, res, next) => {
     throw new ClientError(400, 'projectId must be a positive integer');
   }
   const sql = `
-  insert into "tasks" ("taskName", "projectId")
-  values ($1, $2)
+  insert into "tasks" ("taskName", "projectId", "milestoneId")
+  values ($1, $2, $3)
   returning *
   `;
-  const params = [taskName, projectId];
+  const params = [taskName, projectId, milestoneId];
   db.query(sql, params)
     .then(result => {
       const [newTask] = result.rows;
