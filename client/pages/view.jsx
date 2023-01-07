@@ -99,8 +99,11 @@ class ProjectView extends React.Component {
     event.preventDefault();
     const currentTask = this.state.currentTask;
     const newTask = this.state.taskValues[currentTask.taskIndex];
+    const taskId = newTask.taskId;
     if (currentTask.newTask) {
       this.postTasks(newTask);
+    } else {
+      this.patchTask(newTask, taskId);
     }
   }
 
@@ -133,6 +136,16 @@ class ProjectView extends React.Component {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newTasks)
+    })
+      .then(res => res.json())
+      .catch(err => console.error('Error:', err));
+  }
+
+  patchTask(taskName, taskId) {
+    fetch(`api/tasks/${taskId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(taskName)
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));

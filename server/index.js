@@ -140,6 +140,29 @@ app.post('/api/tasks', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.patch('/api/tasks/:taskId', (req, res, next) => {
+  const taskId = Number(req.params.taskId);
+  const { taskName } = req.body;
+  if (!taskId) {
+    throw new ClientError(400, 'taskId must be a positive integer');
+  }
+  const sql = `
+    update "tasks"
+      set "taskName" = $1
+     where "taskId" = $2
+     returning *
+  `;
+  const params = [taskName, taskId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find task with taskId ${taskId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
