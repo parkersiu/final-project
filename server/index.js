@@ -143,8 +143,8 @@ app.post('/api/tasks', (req, res, next) => {
 app.patch('/api/tasks/:taskId', (req, res, next) => {
   const taskId = Number(req.params.taskId);
   const { taskName, isDeleted } = req.body;
-  if (!taskId) {
-    throw new ClientError(400, 'taskId must be a positive integer');
+  if (!taskId || taskId < 1) {
+    throw new ClientError(400, 'taskId is required and must be a positive integer');
   }
   const sql = `
     update "tasks"
