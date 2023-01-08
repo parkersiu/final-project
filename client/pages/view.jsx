@@ -9,14 +9,13 @@ class ProjectView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageTitle: 'Project Name',
+      pageTitle: 'Project Title',
       projectId: 1,
       currentTask: {
         taskName: '',
         taskIndex: -1,
         newTask: false
       },
-      test: 0,
       taskValues: [],
       milestoneValues: []
     };
@@ -46,9 +45,10 @@ class ProjectView extends React.Component {
     const taskValues = this.state.taskValues;
     const currentTask = this.state.currentTask;
     const index = currentTask.taskIndex;
-    const taskName = taskValues[index];
+    const task = taskValues[index];
     const taskId = taskValues[index].taskId;
-    this.deleteTask(taskName, taskId);
+    task.isDeleted = true;
+    this.deleteTask(task, taskId);
     taskValues.splice(index, 1);
     this.setState({
       taskValues
@@ -147,11 +147,11 @@ class ProjectView extends React.Component {
       .catch(err => console.error('Error:', err));
   }
 
-  deleteTask(taskName, taskId) {
+  deleteTask(task, taskId) {
     fetch(`api/tasks/${taskId}`, {
-      method: 'DELETE',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(taskName)
+      body: JSON.stringify(task)
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));

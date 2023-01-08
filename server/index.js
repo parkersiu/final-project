@@ -142,38 +142,18 @@ app.post('/api/tasks', (req, res, next) => {
 
 app.patch('/api/tasks/:taskId', (req, res, next) => {
   const taskId = Number(req.params.taskId);
-  const { taskName } = req.body;
+  const { taskName, isDeleted } = req.body;
   if (!taskId) {
     throw new ClientError(400, 'taskId must be a positive integer');
   }
   const sql = `
     update "tasks"
-      set "taskName" = $1
-     where "taskId" = $2
-     returning *
+      set "taskName" = $1,
+      "isDeleted"    = $2
+      where "taskId" = $3
+    returning *
   `;
-  const params = [taskName, taskId];
-  db.query(sql, params)
-    .then(result => {
-      if (!result.rows) {
-        throw new ClientError(404, `cannot find task with taskId ${taskId}`);
-      }
-      res.json(result.rows);
-    })
-    .catch(err => next(err));
-});
-
-app.delete('/api/tasks/:taskId', (req, res, next) => {
-  const taskId = Number(req.params.taskId);
-  if (!taskId) {
-    throw new ClientError(400, 'taskId must be a positive integer');
-  }
-  const sql = `
-    delete
-    from "tasks"
-    where "taskId" = $1
-    returning *`;
-  const params = [taskId];
+  const params = [taskName, isDeleted, taskId];
   db.query(sql, params)
     .then(result => {
       if (!result.rows) {

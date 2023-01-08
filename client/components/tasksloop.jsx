@@ -7,7 +7,7 @@ export default function TasksLoop(props) {
     const taskName = taskArray[i].taskName;
     const className = taskArray[i].className;
     const milestoneId = taskArray[i].milestoneId;
-    if (milestoneId === props.referenceId) {
+    if (milestoneId === props.milestoneId && !taskArray[i].isDeleted) {
       tasks.push(
         <li className="list-group-item">
           <input className="form-check-input me-1" type="checkbox" value={taskName} id={i} onChange={props.change} />
