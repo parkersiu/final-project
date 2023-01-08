@@ -16,17 +16,9 @@ class ProjectView extends React.Component {
         taskIndex: -1,
         newTask: false
       },
+      test: 0,
       taskValues: [],
-      milestoneValues: [{
-        milestoneName: 'Milestone 1',
-        milestoneId: 1
-      }, {
-        milestoneName: 'Milestone 2',
-        milestoneId: 2
-      }, {
-        milestoneName: 'Milestone 3',
-        milestoneId: 3
-      }]
+      milestoneValues: []
     };
     this.handleAddTask = this.handleAddTask.bind(this);
     this.handleComplete = this.handleComplete.bind(this);
@@ -52,7 +44,11 @@ class ProjectView extends React.Component {
 
   handleRemoveTask(event) {
     const taskValues = this.state.taskValues;
-    const index = parseInt(event.target.getAttribute('data-index'));
+    const currentTask = this.state.currentTask;
+    const index = currentTask.taskIndex;
+    const taskName = taskValues[index];
+    const taskId = taskValues[index].taskId;
+    this.deleteTask(taskName, taskId);
     taskValues.splice(index, 1);
     this.setState({
       taskValues
@@ -144,6 +140,16 @@ class ProjectView extends React.Component {
   patchTask(taskName, taskId) {
     fetch(`api/tasks/${taskId}`, {
       method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(taskName)
+    })
+      .then(res => res.json())
+      .catch(err => console.error('Error:', err));
+  }
+
+  deleteTask(taskName, taskId) {
+    fetch(`api/tasks/${taskId}`, {
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(taskName)
     })
