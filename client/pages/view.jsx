@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../components/navbar';
 import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
-import CardsLoop from '../components/cardsloop';
+import Cards from '../components/cards';
 import TaskModal from '../components/taskmodal';
 
 class ProjectView extends React.Component {
@@ -13,7 +13,7 @@ class ProjectView extends React.Component {
       projectId: 1,
       currentTask: {
         taskName: '',
-        taskIndex: -1,
+        taskId: 0,
         newTask: false
       },
       taskValues: [],
@@ -44,7 +44,8 @@ class ProjectView extends React.Component {
   handleRemoveTask(event) {
     const taskValues = this.state.taskValues;
     const currentTask = this.state.currentTask;
-    const index = currentTask.taskIndex;
+    const currentTaskId = currentTask.taskId;
+    const index = taskValues.findIndex(taskValues => taskValues.taskId === currentTaskId);
     const task = taskValues[index];
     const taskId = taskValues[index].taskId;
     task.isDeleted = true;
@@ -57,9 +58,9 @@ class ProjectView extends React.Component {
 
   handleEditTask(event) {
     const currentTask = this.state.currentTask;
-    const index = parseInt(event.target.getAttribute('data-index'));
+    const taskId = parseInt(event.target.getAttribute('data-index'));
     currentTask.taskName = event.target.id;
-    currentTask.taskIndex = index;
+    currentTask.taskId = taskId;
     currentTask.newTask = false;
     this.setState({
       currentTask
@@ -172,7 +173,7 @@ class ProjectView extends React.Component {
         <div className='container'>
           <div className='row d-flex flex-nowrap overflow-x-auto'>
             <div className='col' />
-            <CardsLoop milestoneValues={this.state.milestoneValues} taskValues={this.state.taskValues}
+            <Cards milestoneValues={this.state.milestoneValues} taskValues={this.state.taskValues}
             click={this.handleAddTask} change={this.handleComplete} edit={this.handleEditTask}
             currentTask={this.state.currentTask} />
             <div className='col' />
