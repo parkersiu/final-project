@@ -14,6 +14,10 @@ class ProjectView extends React.Component {
       currentTask: {
         taskName: '',
         taskId: 0,
+        isCompleted: false,
+        projectId: 1,
+        milestoneId: 0,
+        isDeleted: false,
         newTask: false
       },
       taskValues: [],
@@ -33,11 +37,10 @@ class ProjectView extends React.Component {
     currentTask.taskName = 'New Task';
     currentTask.newTask = true;
     const eventId = parseInt(event.target.id);
-    taskValues.push({ taskName: 'New Task', isCompleted: false, className: 'form-check-label', projectId: 1, milestoneId: eventId });
+    currentTask.milestoneId = eventId;
     currentTask.taskIndex = taskValues.length - 1;
     this.setState({
-      currentTask,
-      taskValues
+      currentTask
     });
   }
 
@@ -86,22 +89,25 @@ class ProjectView extends React.Component {
 
   handleUpdateTask(event) {
     const currentTask = this.state.currentTask;
-    const taskValues = this.state.taskValues;
-    taskValues[currentTask.taskIndex].taskName = event.target.value;
     currentTask.taskName = event.target.value;
-    this.setState({ currentTask, taskValues });
+    this.setState({ currentTask });
   }
 
   handleSubmitTask(event) {
     event.preventDefault();
     const currentTask = this.state.currentTask;
-    const newTask = this.state.taskValues[currentTask.taskIndex];
-    const taskId = newTask.taskId;
+    const taskValues = this.state.taskValues;
+    const task = taskValues[currentTask.taskIndex];
+    const milestoneId = currentTask.milestoneId;
+    const newTask = { taskName: currentTask.taskName, isCompleted: false, className: 'form-check-label', projectId: 1, milestoneId };
     if (currentTask.newTask) {
+      taskValues.push(newTask);
       this.postTasks(newTask);
     } else {
-      this.patchTask(newTask, taskId);
+      const taskId = taskValues.findIndex(taskValues => taskValues.taskId === currentTask.taskId);
+      this.patchTask(task, taskId);
     }
+    this.setState({ taskValues });
   }
 
   getTasks(projectId) {
