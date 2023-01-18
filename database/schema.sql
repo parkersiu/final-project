@@ -34,6 +34,7 @@ CREATE TABLE "public"."tasks" (
 	"taskName" TEXT NOT NULL,
 	"isCompleted" BOOLEAN NOT NULL DEFAULT 'false',
 	"projectId" integer NOT NULL,
+  "milestoneId" integer NOT NULL,
 	"isDeleted" BOOLEAN NOT NULL DEFAULT 'false',
 	"createdAt" timestamp with time zone NOT NULL DEFAULT 'now()',
 	CONSTRAINT "tasks_pk" PRIMARY KEY ("taskId")

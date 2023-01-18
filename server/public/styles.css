@@ -17,3 +17,15 @@ a.nav-text {
 i:hover {
   cursor: pointer;
 }
+
+.card {
+  width: 18rem;
+}
+
+input[type="checkbox"] {
+  display: none !important;
+}
+
+.strike {
+  text-decoration: line-through;
+}

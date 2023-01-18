@@ -20,14 +20,64 @@ app.use(jsonMiddleware);
 
 app.use(staticMiddleware);
 
-app.get('/api/hello', (req, res) => {
-  res.json({ hello: 'world' });
+app.get('/api/tasks/:projectId', (req, res, next) => {
+  const projectId = Number(req.params.projectId);
+  if (!projectId) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+    select "taskId",
+           "taskName",
+           "isCompleted",
+           "projectId",
+           "milestoneId",
+           "isDeleted"
+      from "tasks"
+     where "projectId" = $1
+  `;
+  const params = [projectId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find product with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
+app.get('/api/milestones/:projectId', (req, res, next) => {
+  const projectId = Number(req.params.projectId);
+  if (!projectId) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+    select "milestoneId",
+           "milestoneName",
+           "dueDate",
+           "projectId",
+           "isDeleted"
+      from "milestones"
+     where "projectId" = $1
+  `;
+  const params = [projectId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find product with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
 });
 
 app.post('/api/projects', (req, res, next) => {
   const { title, description, userId } = req.body;
   if (!title || !description || !userId) {
     throw new ClientError(400, 'title, description, and userId are required fields');
+  }
+  if (!Number.isInteger(userId) || userId < 0) {
+    throw new ClientError(400, 'userId must be a positive integer');
   }
   const sql = `
   insert into "projects" ("title", "description", "userId")
@@ -45,8 +95,12 @@ app.post('/api/projects', (req, res, next) => {
 
 app.post('/api/milestones', (req, res, next) => {
   const { milestoneName, projectId } = req.body;
-  if (!milestoneName) {
-    throw new ClientError(400, 'milestoneName is a required field');
+  parseInt(projectId);
+  if (!milestoneName || !projectId) {
+    throw new ClientError(400, 'milestoneName and projectId are required fields');
+  }
+  if (!Number.isInteger(projectId) || projectId < 0) {
+    throw new ClientError(400, 'projectId must be a positive integer');
   }
   const sql = `
   insert into "milestones" ("milestoneName", "projectId")
@@ -58,6 +112,54 @@ app.post('/api/milestones', (req, res, next) => {
     .then(result => {
       const [newMilestone] = result.rows;
       res.status(201).json(newMilestone);
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/tasks', (req, res, next) => {
+  const { taskName } = req.body;
+  const projectId = Number(req.body.projectId);
+  const milestoneId = Number(req.body.milestoneId);
+  if (!taskName || !projectId) {
+    throw new ClientError(400, 'taskName and projectId are required fields');
+  }
+  if (!Number.isInteger(projectId) || projectId < 0) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+  insert into "tasks" ("taskName", "projectId", "milestoneId")
+  values ($1, $2, $3)
+  returning *
+  `;
+  const params = [taskName, projectId, milestoneId];
+  db.query(sql, params)
+    .then(result => {
+      const [newTask] = result.rows;
+      res.status(201).json(newTask);
+    })
+    .catch(err => next(err));
+});
+
+app.patch('/api/tasks/:taskId', (req, res, next) => {
+  const taskId = Number(req.params.taskId);
+  const { taskName, isDeleted } = req.body;
+  if (!taskId || taskId < 1) {
+    throw new ClientError(400, 'taskId is required and must be a positive integer');
+  }
+  const sql = `
+    update "tasks"
+      set "taskName" = $1,
+      "isDeleted"    = $2
+      where "taskId" = $3
+    returning *
+  `;
+  const params = [taskName, isDeleted, taskId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find task with taskId ${taskId}`);
+      }
+      res.json(result.rows);
     })
     .catch(err => next(err));
 });
