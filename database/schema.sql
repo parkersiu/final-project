@@ -1,7 +1,3 @@
-drop schema "public" cascade;
-
-create schema "public";
-
 CREATE TABLE "public"."users" (
 	"userId" serial NOT NULL,
 	"username" TEXT NOT NULL UNIQUE,
@@ -56,11 +52,9 @@ CREATE TABLE "public"."milestones" (
   OIDS=FALSE
 );
 
-
-
-
 ALTER TABLE "projects" ADD CONSTRAINT "projects_fk0" FOREIGN KEY ("userId") REFERENCES "users"("userId");
 
 ALTER TABLE "tasks" ADD CONSTRAINT "tasks_fk0" FOREIGN KEY ("projectId") REFERENCES "projects"("projectId");
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_fk1" FOREIGN KEY ("milestoneId") REFERENCES "milestones"("milestoneId");
 
 ALTER TABLE "milestones" ADD CONSTRAINT "milestones_fk0" FOREIGN KEY ("projectId") REFERENCES "projects"("projectId");
