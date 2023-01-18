@@ -39,7 +39,7 @@ app.get('/api/tasks/:projectId', (req, res, next) => {
   db.query(sql, params)
     .then(result => {
       if (!result.rows) {
-        throw new ClientError(404, `cannot find product with projectId ${projectId}`);
+        throw new ClientError(404, `cannot find project with projectId ${projectId}`);
       }
       res.json(result.rows);
     })
@@ -64,7 +64,7 @@ app.get('/api/milestones/:projectId', (req, res, next) => {
   db.query(sql, params)
     .then(result => {
       if (!result.rows) {
-        throw new ClientError(404, `cannot find product with projectId ${projectId}`);
+        throw new ClientError(404, `cannot find project with projectId ${projectId}`);
       }
       res.json(result.rows);
     })
