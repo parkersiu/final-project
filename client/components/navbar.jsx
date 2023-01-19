@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RegisterModal from './registermodal';
 
 export default function Navbar(props) {
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+
   return (
     <div>
-      <RegisterModal />
+      <RegisterModal show={show} onClose={handleClose} />
       <nav className="navbar navbar-expand-lg navbar-dark">
         <div className="container-fluid">
           <a className="navbar-brand text-white" href="#">Milestone</a>
@@ -28,7 +32,7 @@ export default function Navbar(props) {
                 <a className="nav-link nav-text" href='#'>About</a>
               </li>
             </ul>
-            <button className="btn btn-outline-primary me-2 nav-button" type="button" data-bs-toggle="modal" data-bs-target='#registerModal'>Register</button>
+            <button className="btn btn-outline-primary me-2 nav-button" type="button" onClick={handleShow}>Register</button>
             <button className="btn btn-outline-success ms-2 nav-button" type="button">Log In</button>
           </div>
         </div>
