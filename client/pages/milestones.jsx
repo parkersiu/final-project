@@ -1,80 +1,83 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/navbar';
 import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 
-class MilestoneForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      pageTitle: 'Create a project',
-      milestoneName: '',
-      projectId: 1,
-      milestoneCounter: 3,
-      milestoneValues: [{
-        milestoneName: ''
-      }, {
-        milestoneName: ''
-      }, {
-        milestoneName: ''
-      }]
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleRemoveInput = this.handleRemoveInput.bind(this);
-    this.handleAddInput = this.handleAddInput.bind(this);
-    this.inputsLoop = this.inputsLoop.bind(this);
-  }
+function MilestoneForm(props) {
+  const [pageTitle] = useState('Create a project');
+  const [projectId, setProjectId] = useState(parseInt(props.projectId));
+  const [milestoneCounter, setMilestoneCounter] = useState(1);
+  const [milestoneValues, setMilestoneValues] = useState([
+    { milestoneName: '' }
+  ]);
 
-  handleRemoveInput(event) {
-    let milestoneCounter = this.state.milestoneCounter;
-    milestoneCounter--;
-    const inputs = this.state.milestoneValues;
-    const i = parseInt(event.target.getAttribute('id'));
-    inputs.splice(i, 1);
-    this.setState({
-      milestoneCounter,
-      milestoneValues: inputs
-    });
-  }
+  const handleRemoveInput = event => {
+    setMilestoneCounter(milestoneCounter - 1);
+    const eventId = parseInt(event.target.getAttribute('id'));
+    setMilestoneValues(
+      milestoneValues.filter((_, i) => i !== eventId)
+    );
+  };
 
-  handleAddInput(event) {
-    let milestoneCounter = this.state.milestoneCounter;
-    const milestoneValues = this.state.milestoneValues;
-    milestoneValues.push({ milestoneName: '' });
-    milestoneCounter++;
-    this.setState({
-      milestoneCounter,
-      milestoneValues
-    });
-  }
+  const handleAddInput = event => {
+    setMilestoneCounter(milestoneCounter + 1);
+    setMilestoneValues(
+      [...milestoneValues, { milestoneName: '' }]
+    );
+  };
 
-  handleInputChange(event) {
-    const inputs = this.state.milestoneValues;
+  const handleInputChange = event => {
     const value = event.target.value;
-    const i = event.target.name;
-    inputs[i].milestoneName = value;
-    this.setState({ milestoneValues: inputs });
-  }
+    const eventIndex = parseInt(event.target.name);
+    setMilestoneValues(milestoneValues.map(
+      (element, i) => {
+        if (i === eventIndex) {
+          return { ...element, milestoneName: value };
+        } else {
+          return element;
+        }
+      }
+    ));
+  };
 
-  inputsLoop() {
+  const inputsLoop = () => {
     const inputs = [];
-    for (let i = 0; i < this.state.milestoneCounter; i++) {
+    for (let i = 0; i < milestoneCounter; i++) {
       inputs.push(
         <div className='input-group mb-3' key={i}>
           <span className='input-group-text'>{i + 1}</span>
-          <input className='form-control' type="text" placeholder='Enter a milestone'
-          name={i} value={this.state.milestoneValues[i].milestoneName} onChange={this.handleInputChange} />
+          <input required className='form-control' type="text" placeholder='Enter a milestone'
+          name={i} value={milestoneValues[i].milestoneName} onChange={handleInputChange} />
           <span className='input-group-text'>
-            <i className="fa-solid fa-x" id={i} onClick={this.handleRemoveInput} />
+            <i className="fa-solid fa-x" id={i} onClick={handleRemoveInput} />
           </span>
         </div>
       );
     }
     return inputs;
-  }
+  };
 
-  handleSubmit(event) {
+  const handleSubmit = event => {
+    event.preventDefault();
+    async function addMilestone(newMilestone) {
+      const response = await fetch('/api/milestones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMilestone)
+      });
+      const data = await response.json();
+      const newProjectId = data.projectId;
+      setProjectId(newProjectId);
+      window.location.href = `#view?projectId=${projectId}`;
+    }
+    for (let i = 0; i < milestoneValues.length; i++) {
+      const milestoneName = milestoneValues[i].milestoneName;
+      const newMilestone = { milestoneName, projectId };
+      addMilestone(newMilestone);
+    }
+  };
+
+  /* const handleSubmit = event => {
     function addMilestone(newMilestone) {
       fetch('/api/milestones', {
         method: 'POST',
@@ -85,39 +88,37 @@ class MilestoneForm extends React.Component {
         .catch(err => console.error('Error:', err));
     }
     event.preventDefault();
-    const projectId = this.state.projectId;
-    for (let i = 0; i < this.state.milestoneValues.length; i++) {
-      const milestoneName = this.state.milestoneValues[i].milestoneName;
+    for (let i = 0; i < milestoneValues.length; i++) {
+      const milestoneName = milestoneValues[i].milestoneName;
       const newMilestone = { milestoneName, projectId };
       addMilestone(newMilestone);
     }
-  }
+    window.location.href = `#view?${projectId}`;
+  }; */
 
-  render() {
-    return (
-      <div>
-        <PageTitle pageTitle={this.state.pageTitle} />
-        <div className='container'>
-          <div className='row'>
-            <div className='col' />
-            <div className='col-6 mt-2 ms-5 mb-2'>Milestones:</div>
-            <div className='col' />
+  return (
+    <div>
+      <PageTitle pageTitle={pageTitle} />
+      <div className='container'>
+        <div className='row'>
+          <div className='col' />
+          <div className='col-6 mt-2 ms-5 mb-2'>Milestones:</div>
+          <div className='col' />
+        </div>
+        <div className='row'>
+          <div className='col' />
+          <div className='col'>
+            <form onSubmit={handleSubmit}>
+              {inputsLoop()}
+              <i className="fa-solid fa-plus mt-2 ms-2" onClick={handleAddInput} />
+              <button className='btn btn-primary float-end' type='submit'>Done</button>
+            </form>
           </div>
-          <div className='row'>
-            <div className='col' />
-            <div className='col'>
-              <form onSubmit={this.handleSubmit}>
-                {this.inputsLoop()}
-                <i className="fa-solid fa-plus mt-2 ms-2" onClick={this.handleAddInput} />
-                <button className='btn btn-primary float-end' type='submit'>Done</button>
-              </form>
-            </div>
-            <div className='col' />
-          </div>
+          <div className='col' />
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default function Milestones(props) {
@@ -125,7 +126,7 @@ export default function Milestones(props) {
     <div>
       <Navbar />
       <Breadcrumb />
-      <MilestoneForm />
+      <MilestoneForm projectId={props.projectId} />
     </div>
   );
 }

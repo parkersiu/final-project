@@ -73,7 +73,8 @@ app.get('/api/milestones/:projectId', (req, res, next) => {
 });
 
 app.post('/api/projects', (req, res, next) => {
-  const { title, description, userId } = req.body;
+  const { title, description } = req.body;
+  const userId = parseInt(req.body.userId);
   if (!title || !description || !userId) {
     throw new ClientError(400, 'title, description, and userId are required fields');
   }

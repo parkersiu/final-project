@@ -2,22 +2,47 @@ import React from 'react';
 import Projects from './pages/projects';
 import Milestones from './pages/milestones';
 import View from './pages/view';
+import NotFound from './pages/not-found';
+import { parseRoute } from './lib/';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { page: 'view' };
+    this.state = {
+      route: parseRoute(window.location.hash)
+    };
+  }
+
+  componentDidMount() {
+    window.addEventListener('hashchange', event => {
+      this.setState({
+        route: parseRoute(window.location.hash),
+        projectId: this.state.route.params.get('projectId')
+      });
+    });
+  }
+
+  renderPage() {
+    const { route } = this.state;
+    if (route.path === '') {
+      return <Projects />;
+    }
+    if (route.path === 'milestones') {
+      const projectId = route.params.get('projectId');
+      return <Milestones projectId={projectId} />;
+    }
+    if (route.path === 'view') {
+      const projectId = route.params.get('projectId');
+      return <View projectId={projectId} />;
+    }
+    return <NotFound />;
   }
 
   render() {
-    if (this.state.page === 'projects') {
-      return <Projects />;
-    }
-    if (this.state.page === 'milestones') {
-      return <Milestones />;
-    }
-    if (this.state.page === 'view') {
-      return <View />;
-    }
+    return (
+      <>
+        { this.renderPage() }
+      </>
+    );
   }
 }
