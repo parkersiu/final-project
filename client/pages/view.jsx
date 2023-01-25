@@ -15,7 +15,8 @@ function ProjectView(props) {
     projectId: 1,
     milestoneId: 0,
     isDeleted: false,
-    newTask: false
+    newTask: false,
+    type: 'Add'
   });
   const [taskValues, setTaskValues] = useState([]);
   const [milestoneValues, setMilestoneValues] = useState([]);
@@ -27,24 +28,10 @@ function ProjectView(props) {
       taskName: 'New Task',
       newTask: true,
       milestoneId: eventId,
-      taskIndex: taskValues.length - 1
+      taskIndex: taskValues.length - 1,
+      type: 'Add'
     });
   };
-
-  /* const handleRemoveTask = event => {
-    const taskValues = this.state.taskValues;
-    const currentTask = this.state.currentTask;
-    const currentTaskId = currentTask.taskId;
-    const index = taskValues.findIndex(taskValues => taskValues.taskId === currentTaskId);
-    const task = taskValues[index];
-    const taskId = taskValues[index].taskId;
-    task.isDeleted = true;
-    this.deleteTask(task, taskId);
-    taskValues.splice(index, 1);
-    this.setState({
-      taskValues
-    });
-  }; */
 
   const handleRemoveTask = event => {
     const currentTaskId = currentTask.taskId;
@@ -59,43 +46,16 @@ function ProjectView(props) {
     );
   };
 
-  /* const handleEditTask = event => {
-    const currentTask = this.state.currentTask;
-    const taskId = parseInt(event.target.getAttribute('data-index'));
-    currentTask.taskName = event.target.id;
-    currentTask.taskId = taskId;
-    currentTask.newTask = false;
-    this.setState({
-      currentTask
-    });
-  }; */
-
   const handleEditTask = event => {
     const taskId = parseInt(event.target.getAttribute('data-index'));
     setCurrentTask({
       ...currentTask,
       taskName: event.target.id,
       taskId,
-      newTask: false
+      newTask: false,
+      type: 'Edit'
     });
   };
-
-  /* const handleComplete = event => {
-    const taskValues = this.state.taskValues;
-    const i = parseInt(event.target.getAttribute('id'));
-    const complete = taskValues[i].isCompleted;
-    if (complete) {
-      taskValues[i].isCompleted = !taskValues[i].isCompleted;
-      taskValues[i].className = 'form-check-label';
-    }
-    if (!complete) {
-      taskValues[i].isCompleted = !taskValues[i].isCompleted;
-      taskValues[i].className = 'form-check-label strike';
-    }
-    this.setState({
-      taskValues
-    });
-  }; */
 
   const handleComplete = event => {
     const taskIndex = parseInt(event.target.getAttribute('id'));
@@ -124,35 +84,12 @@ function ProjectView(props) {
     }
   };
 
-  /* const handleUpdateTask = event => {
-    const currentTask = this.state.currentTask;
-    currentTask.taskName = event.target.value;
-    this.setState({ currentTask });
-  }; */
-
   const handleUpdateTask = event => {
     setCurrentTask({
       ...currentTask,
       taskName: event.target.value
     });
   };
-
-  /* const handleSubmitTask = event => {
-    event.preventDefault();
-    const currentTask = this.state.currentTask;
-    const taskValues = this.state.taskValues;
-    const task = taskValues[currentTask.taskIndex];
-    const milestoneId = currentTask.milestoneId;
-    const newTask = { taskName: currentTask.taskName, isCompleted: false, className: 'form-check-label', projectId: this.state.projectId, milestoneId };
-    if (currentTask.newTask) {
-      taskValues.push(newTask);
-      this.postTasks(newTask);
-    } else {
-      const taskId = taskValues.findIndex(taskValues => taskValues.taskId === currentTask.taskId);
-      this.patchTask(task, taskId);
-    }
-    this.setState({ taskValues });
-  }; */
 
   const handleSubmitTask = event => {
     event.preventDefault();
@@ -162,27 +99,15 @@ function ProjectView(props) {
     if (currentTask.newTask) {
       setTaskValues([
         ...taskValues,
-        { newTask }
+        newTask
       ]);
       postTasks(newTask);
     } else {
+      setTaskValues([...taskValues]);
       const taskId = parseInt(currentTask.taskId);
       patchTask(task, taskId);
     }
-    setCurrentTask({ ...currentTask });
   };
-
-  /* const getTasks = projectId => {
-    fetch(`/api/tasks/${projectId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-      .then(res => res.json())
-      .then(data => setTaskValues({
-        taskValues: data
-      }))
-      .catch(err => console.error('Error:', err));
-  }; */
 
   async function getTasks(projectId) {
     const response = await fetch(`/api/tasks/${projectId}`, {
@@ -193,17 +118,6 @@ function ProjectView(props) {
     setTaskValues(data);
   }
 
-  /* const getMilestones = projectId => {
-    fetch(`/api/milestones/${projectId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-      .then(res => res.json())
-      .then(data => setMilestoneValues({
-        milestoneValues: data
-      }))
-      .catch(err => console.error('Error:', err));
-  }; */
   async function getMilestones(projectId) {
     const response = await fetch(`/api/milestones/${projectId}`, {
       method: 'GET',
@@ -251,7 +165,7 @@ function ProjectView(props) {
   return (
     <div>
       <TaskModal taskName={currentTask.taskName} updateTask={handleUpdateTask}
-        submit={handleSubmitTask} delete={handleRemoveTask} dataIndex={currentTask.taskIndex} />
+        submit={handleSubmitTask} delete={handleRemoveTask} dataIndex={currentTask.taskIndex} type={currentTask.type} />
       <PageTitle pageTitle={pageTitle} />
       <div className='container'>
         <div className='row d-flex flex-nowrap overflow-x-auto'>
