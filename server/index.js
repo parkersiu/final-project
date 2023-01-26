@@ -4,6 +4,7 @@ const express = require('express');
 const ClientError = require('./client-error');
 const staticMiddleware = require('./static-middleware');
 const errorMiddleware = require('./error-middleware');
+const argon2 = require('argon2');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -19,6 +20,31 @@ const jsonMiddleware = express.json();
 app.use(jsonMiddleware);
 
 app.use(staticMiddleware);
+
+app.get('/api/projects/:projectId', (req, res, next) => {
+  const projectId = Number(req.params.projectId);
+  if (!projectId) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+    select "projectId",
+           "title",
+           "description",
+           "isArchived",
+           "isDeleted"
+      from "projects"
+     where "projectId" = $1
+  `;
+  const params = [projectId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find project with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
 
 app.get('/api/tasks/:projectId', (req, res, next) => {
   const projectId = Number(req.params.projectId);
@@ -72,7 +98,8 @@ app.get('/api/milestones/:projectId', (req, res, next) => {
 });
 
 app.post('/api/projects', (req, res, next) => {
-  const { title, description, userId } = req.body;
+  const { title, description } = req.body;
+  const userId = parseInt(req.body.userId);
   if (!title || !description || !userId) {
     throw new ClientError(400, 'title, description, and userId are required fields');
   }
@@ -136,6 +163,30 @@ app.post('/api/tasks', (req, res, next) => {
     .then(result => {
       const [newTask] = result.rows;
       res.status(201).json(newTask);
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/auth/sign-up', (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ClientError(400, 'username and password are required fields');
+  }
+  argon2
+    .hash(password)
+    .then(hashedPassword => {
+      const sql = `
+      insert into "users" ("username", "password")
+      values ($1, $2)
+      returning *
+      `;
+      const params = [username, hashedPassword];
+      db.query(sql, params)
+        .then(result => {
+          const [newUser] = result.rows;
+          res.status(201).json(newUser);
+        })
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 });

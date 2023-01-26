@@ -1,140 +1,134 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 import Cards from '../components/cards';
 import TaskModal from '../components/taskmodal';
 
-class ProjectView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      pageTitle: 'Project Title',
-      projectId: 1,
-      currentTask: {
-        taskName: '',
-        taskId: 0,
-        isCompleted: false,
-        projectId: 1,
-        milestoneId: 0,
-        isDeleted: false,
-        newTask: false
-      },
-      taskValues: [],
-      milestoneValues: []
-    };
-    this.handleAddTask = this.handleAddTask.bind(this);
-    this.handleComplete = this.handleComplete.bind(this);
-    this.handleEditTask = this.handleEditTask.bind(this);
-    this.handleUpdateTask = this.handleUpdateTask.bind(this);
-    this.handleSubmitTask = this.handleSubmitTask.bind(this);
-    this.handleRemoveTask = this.handleRemoveTask.bind(this);
-  }
+function ProjectView(props) {
+  const [pageTitle, setPageTitle] = useState('Project Name');
+  const [projectId] = useState(parseInt(props.projectId));
+  const [currentTask, setCurrentTask] = useState({
+    taskName: '',
+    taskId: 0,
+    isCompleted: false,
+    projectId: 1,
+    milestoneId: 0,
+    isDeleted: false,
+    newTask: false,
+    type: 'Add'
+  });
+  const [taskValues, setTaskValues] = useState([]);
+  const [milestoneValues, setMilestoneValues] = useState([]);
 
-  handleAddTask(event) {
-    const taskValues = this.state.taskValues;
-    const currentTask = this.state.currentTask;
-    currentTask.taskName = 'New Task';
-    currentTask.newTask = true;
+  const handleAddTask = event => {
     const eventId = parseInt(event.target.id);
-    currentTask.milestoneId = eventId;
-    currentTask.taskIndex = taskValues.length - 1;
-    this.setState({
-      currentTask
+    setCurrentTask({
+      ...currentTask,
+      taskName: 'New Task',
+      newTask: true,
+      milestoneId: eventId,
+      taskIndex: taskValues.length - 1,
+      type: 'Add'
     });
-  }
+  };
 
-  handleRemoveTask(event) {
-    const taskValues = this.state.taskValues;
-    const currentTask = this.state.currentTask;
+  const handleRemoveTask = event => {
     const currentTaskId = currentTask.taskId;
-    const index = taskValues.findIndex(taskValues => taskValues.taskId === currentTaskId);
-    const task = taskValues[index];
-    const taskId = taskValues[index].taskId;
+    const taskIndex = taskValues.findIndex(taskValues => taskValues.taskId === currentTaskId);
+    const task = taskValues[taskIndex];
+    const taskId = taskValues[taskIndex].taskId;
     task.isDeleted = true;
-    this.deleteTask(task, taskId);
-    taskValues.splice(index, 1);
-    this.setState({
-      taskValues
-    });
-  }
+    deleteTask(task, taskId);
+    taskValues.map();
+    setTaskValues(
+      taskValues.filter((_, i) => i !== taskIndex)
+    );
+  };
 
-  handleEditTask(event) {
-    const currentTask = this.state.currentTask;
+  const handleEditTask = event => {
     const taskId = parseInt(event.target.getAttribute('data-index'));
-    currentTask.taskName = event.target.id;
-    currentTask.taskId = taskId;
-    currentTask.newTask = false;
-    this.setState({
-      currentTask
+    setCurrentTask({
+      ...currentTask,
+      taskName: event.target.id,
+      taskId,
+      newTask: false,
+      type: 'Edit'
     });
-  }
+  };
 
-  handleComplete(event) {
-    const taskValues = this.state.taskValues;
-    const i = parseInt(event.target.getAttribute('id'));
-    const complete = taskValues[i].isCompleted;
+  const handleComplete = event => {
+    const taskIndex = parseInt(event.target.getAttribute('id'));
+    const complete = taskValues[taskIndex].isCompleted;
     if (complete) {
-      taskValues[i].isCompleted = !taskValues[i].isCompleted;
-      taskValues[i].className = 'form-check-label';
+      setTaskValues(
+        milestoneValues.map((element, i) => {
+          if (i === taskIndex) {
+            return { ...element, isCompleted: !complete, className: 'form-check-label' };
+          } else {
+            return element;
+          }
+        })
+      );
     }
     if (!complete) {
-      taskValues[i].isCompleted = !taskValues[i].isCompleted;
-      taskValues[i].className = 'form-check-label strike';
+      setTaskValues(
+        milestoneValues.map((element, i) => {
+          if (i === taskIndex) {
+            return { ...element, isCompleted: !complete, className: 'form-check-label strike' };
+          } else {
+            return element;
+          }
+        })
+      );
     }
-    this.setState({
-      taskValues
+  };
+
+  const handleUpdateTask = event => {
+    setCurrentTask({
+      ...currentTask,
+      taskName: event.target.value
     });
-  }
+  };
 
-  handleUpdateTask(event) {
-    const currentTask = this.state.currentTask;
-    currentTask.taskName = event.target.value;
-    this.setState({ currentTask });
-  }
-
-  handleSubmitTask(event) {
+  const handleSubmitTask = event => {
     event.preventDefault();
-    const currentTask = this.state.currentTask;
-    const taskValues = this.state.taskValues;
-    const task = taskValues[currentTask.taskIndex];
     const milestoneId = currentTask.milestoneId;
-    const newTask = { taskName: currentTask.taskName, isCompleted: false, className: 'form-check-label', projectId: 1, milestoneId };
+    const task = { taskName: currentTask.taskName, isDeleted: currentTask.isDeleted };
+    const newTask = { taskName: currentTask.taskName, isCompleted: false, className: 'form-check-label', projectId, milestoneId };
     if (currentTask.newTask) {
-      taskValues.push(newTask);
-      this.postTasks(newTask);
-    } else {
-      const taskId = taskValues.findIndex(taskValues => taskValues.taskId === currentTask.taskId);
-      this.patchTask(task, taskId);
+      setTaskValues([
+        ...taskValues,
+        newTask
+      ]);
+      postTasks(newTask);
     }
-    this.setState({ taskValues });
-  }
+    if (!currentTask.newTask) {
+      setTaskValues([...taskValues]);
+      const taskId = parseInt(currentTask.taskId);
+      patchTask(task, taskId);
+    }
+  };
 
-  getTasks(projectId) {
-    fetch(`api/tasks/${projectId}`, {
+  async function getTasks(projectId) {
+    const response = await fetch(`/api/tasks/${projectId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
-    })
-      .then(res => res.json())
-      .then(data => this.setState({
-        taskValues: data
-      }))
-      .catch(err => console.error('Error:', err));
+    });
+    const data = await response.json();
+    setTaskValues(data);
   }
 
-  getMilestones(projectId) {
-    fetch(`api/milestones/${projectId}`, {
+  async function getMilestones(projectId) {
+    const response = await fetch(`/api/milestones/${projectId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
-    })
-      .then(res => res.json())
-      .then(data => this.setState({
-        milestoneValues: data
-      }))
-      .catch(err => console.error('Error:', err));
+    });
+    const data = await response.json();
+    setMilestoneValues(data);
   }
 
-  postTasks(newTasks) {
+  const postTasks = newTasks => {
     fetch('/api/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -142,9 +136,9 @@ class ProjectView extends React.Component {
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));
-  }
+  };
 
-  patchTask(taskName, taskId) {
+  const patchTask = (taskName, taskId) => {
     fetch(`api/tasks/${taskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -152,9 +146,9 @@ class ProjectView extends React.Component {
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));
-  }
+  };
 
-  deleteTask(task, taskId) {
+  const deleteTask = (task, taskId) => {
     fetch(`api/tasks/${taskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -162,32 +156,40 @@ class ProjectView extends React.Component {
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));
-  }
+  };
 
-  componentDidMount() {
-    const projectId = this.state.projectId;
-    this.getMilestones(projectId);
-    this.getTasks(projectId);
-  }
+  const getProject = projectId => {
+    fetch(`api/projects/${projectId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(res => res.json())
+      .then(data => setPageTitle(data[0].title))
+      .catch(err => console.error('Error:', err));
+  };
 
-  render() {
-    return (
-      <div>
-        <TaskModal taskName={this.state.currentTask.taskName} updateTask={this.handleUpdateTask}
-        submit={this.handleSubmitTask} delete={this.handleRemoveTask} dataIndex={this.state.currentTask.taskIndex} />
-        <PageTitle pageTitle={this.state.pageTitle} />
-        <div className='container'>
-          <div className='row d-flex flex-nowrap overflow-x-auto'>
-            <div className='col' />
-            <Cards milestoneValues={this.state.milestoneValues} taskValues={this.state.taskValues}
-            click={this.handleAddTask} change={this.handleComplete} edit={this.handleEditTask}
-            currentTask={this.state.currentTask} />
-            <div className='col' />
-          </div>
+  useEffect(() => {
+    getMilestones(projectId);
+    getTasks(projectId);
+    getProject(projectId);
+  }, [projectId]);
+
+  return (
+    <div>
+      <TaskModal taskName={currentTask.taskName} updateTask={handleUpdateTask}
+        submit={handleSubmitTask} delete={handleRemoveTask} dataIndex={currentTask.taskIndex} type={currentTask.type} />
+      <PageTitle pageTitle={pageTitle} />
+      <div className='container'>
+        <div className='row d-flex flex-nowrap overflow-x-auto'>
+          <div className='col' />
+          <Cards milestoneValues={milestoneValues} taskValues={taskValues}
+            click={handleAddTask} change={handleComplete} edit={handleEditTask}
+            currentTask={currentTask} />
+          <div className='col' />
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default function View(props) {
@@ -195,7 +197,7 @@ export default function View(props) {
     <div>
       <Navbar />
       <Breadcrumb />
-      <ProjectView />
+      <ProjectView projectId={props.projectId} />
     </div>
   );
 }
