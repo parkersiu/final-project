@@ -4,7 +4,7 @@ import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 
 function MilestoneForm(props) {
-  const [pageTitle] = useState('Create a project');
+  const [pageTitle] = useState('Project Name');
   const [projectId, setProjectId] = useState(parseInt(props.projectId));
   const [milestoneCounter, setMilestoneCounter] = useState(1);
   const [milestoneValues, setMilestoneValues] = useState([
@@ -68,7 +68,7 @@ function MilestoneForm(props) {
       const data = await response.json();
       const newProjectId = data.projectId;
       setProjectId(newProjectId);
-      window.location.href = `#view?projectId=${projectId}`;
+      window.location.href = `#view?projectId=${projectId}?projectTitle=${pageTitle}`;
     }
     for (let i = 0; i < milestoneValues.length; i++) {
       const milestoneName = milestoneValues[i].milestoneName;
@@ -76,25 +76,6 @@ function MilestoneForm(props) {
       addMilestone(newMilestone);
     }
   };
-
-  /* const handleSubmit = event => {
-    function addMilestone(newMilestone) {
-      fetch('/api/milestones', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMilestone)
-      })
-        .then(res => res.json())
-        .catch(err => console.error('Error:', err));
-    }
-    event.preventDefault();
-    for (let i = 0; i < milestoneValues.length; i++) {
-      const milestoneName = milestoneValues[i].milestoneName;
-      const newMilestone = { milestoneName, projectId };
-      addMilestone(newMilestone);
-    }
-    window.location.href = `#view?${projectId}`;
-  }; */
 
   return (
     <div>

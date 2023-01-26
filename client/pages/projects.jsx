@@ -65,7 +65,7 @@ export default function Projects(props) {
     <div>
       <Navbar />
       <Breadcrumb />
-      <Form projectId={props.projectId}/>
+      <Form projectId={props.projectId} />
     </div>
   );
 }

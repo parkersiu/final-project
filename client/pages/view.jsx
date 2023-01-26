@@ -6,7 +6,7 @@ import Cards from '../components/cards';
 import TaskModal from '../components/taskmodal';
 
 function ProjectView(props) {
-  const [pageTitle] = useState('Project Title');
+  const [pageTitle, setPageTitle] = useState('Project Name');
   const [projectId] = useState(parseInt(props.projectId));
   const [currentTask, setCurrentTask] = useState({
     taskName: '',
@@ -102,7 +102,8 @@ function ProjectView(props) {
         newTask
       ]);
       postTasks(newTask);
-    } else {
+    }
+    if (!currentTask.newTask) {
       setTaskValues([...taskValues]);
       const taskId = parseInt(currentTask.taskId);
       patchTask(task, taskId);
@@ -157,9 +158,20 @@ function ProjectView(props) {
       .catch(err => console.error('Error:', err));
   };
 
+  const getProject = projectId => {
+    fetch(`api/projects/${projectId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(res => res.json())
+      .then(data => setPageTitle(data[0].title))
+      .catch(err => console.error('Error:', err));
+  };
+
   useEffect(() => {
     getMilestones(projectId);
     getTasks(projectId);
+    getProject(projectId);
   }, [projectId]);
 
   return (

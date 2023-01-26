@@ -21,6 +21,31 @@ app.use(jsonMiddleware);
 
 app.use(staticMiddleware);
 
+app.get('/api/projects/:projectId', (req, res, next) => {
+  const projectId = Number(req.params.projectId);
+  if (!projectId) {
+    throw new ClientError(400, 'projectId must be a positive integer');
+  }
+  const sql = `
+    select "projectId",
+           "title",
+           "description",
+           "isArchived",
+           "isDeleted"
+      from "projects"
+     where "projectId" = $1
+  `;
+  const params = [projectId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find project with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
 app.get('/api/tasks/:projectId', (req, res, next) => {
   const projectId = Number(req.params.projectId);
   if (!projectId) {
