@@ -72,7 +72,8 @@ function MilestoneForm(props) {
     }
     for (let i = 0; i < milestoneValues.length; i++) {
       const milestoneName = milestoneValues[i].milestoneName;
-      const newMilestone = { milestoneName, projectId };
+      const milestoneIndex = i;
+      const newMilestone = { milestoneName, projectId, milestoneIndex };
       addMilestone(newMilestone);
     }
   };

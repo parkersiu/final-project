@@ -82,9 +82,11 @@ app.get('/api/milestones/:projectId', (req, res, next) => {
            "milestoneName",
            "dueDate",
            "projectId",
-           "isDeleted"
+           "isDeleted",
+           "milestoneIndex"
       from "milestones"
      where "projectId" = $1
+     order by "milestoneIndex"
   `;
   const params = [projectId];
   db.query(sql, params)
@@ -121,20 +123,24 @@ app.post('/api/projects', (req, res, next) => {
 });
 
 app.post('/api/milestones', (req, res, next) => {
-  const { milestoneName, projectId } = req.body;
+  const { milestoneName, projectId, milestoneIndex } = req.body;
   parseInt(projectId);
+  parseInt(milestoneIndex);
   if (!milestoneName || !projectId) {
     throw new ClientError(400, 'milestoneName and projectId are required fields');
   }
   if (!Number.isInteger(projectId) || projectId < 0) {
     throw new ClientError(400, 'projectId must be a positive integer');
   }
+  if (!Number.isInteger(milestoneIndex)) {
+    throw new ClientError(400, 'milestoneIndex must be an integer');
+  }
   const sql = `
-  insert into "milestones" ("milestoneName", "projectId")
-  values ($1, $2)
+  insert into "milestones" ("milestoneName", "projectId", "milestoneIndex")
+  values ($1, $2, $3)
   returning *
   `;
-  const params = [milestoneName, projectId];
+  const params = [milestoneName, projectId, milestoneIndex];
   db.query(sql, params)
     .then(result => {
       const [newMilestone] = result.rows;
