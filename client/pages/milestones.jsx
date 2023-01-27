@@ -88,7 +88,7 @@ function MilestoneForm(props) {
         </div>
         <div className='row'>
           <div className='col' />
-          <div className='col'>
+          <div className='col-7'>
             <form onSubmit={handleSubmit}>
               {inputsLoop()}
               <i className="fa-solid fa-plus mt-2 ms-2" onClick={handleAddInput} />
