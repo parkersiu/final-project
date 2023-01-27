@@ -83,7 +83,7 @@ function MilestoneForm(props) {
       <div className='container'>
         <div className='row'>
           <div className='col' />
-          <div className='col-6 mt-2 ms-5 mb-2'>Milestones:</div>
+          <div className='col-8 mt-2 ms-5 mb-2'>Milestones:</div>
           <div className='col' />
         </div>
         <div className='row'>
