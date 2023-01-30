@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
-import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 
 function MilestoneForm(props) {
@@ -68,7 +67,7 @@ function MilestoneForm(props) {
       const data = await response.json();
       const newProjectId = data.projectId;
       setProjectId(newProjectId);
-      window.location.href = `#view?projectId=${projectId}?projectTitle=${pageTitle}`;
+      window.location.href = `#view?projectId=${projectId}`;
     }
     for (let i = 0; i < milestoneValues.length; i++) {
       const milestoneName = milestoneValues[i].milestoneName;
@@ -107,7 +106,6 @@ export default function Milestones(props) {
   return (
     <div>
       <Navbar />
-      <Breadcrumb />
       <MilestoneForm projectId={props.projectId} />
     </div>
   );

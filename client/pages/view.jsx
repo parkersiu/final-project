@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
-import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 import Cards from '../components/cards';
 import TaskModal from '../components/taskmodal';
@@ -119,14 +118,16 @@ function ProjectView(props) {
     setTaskValues(data);
   }
 
-  async function getMilestones(projectId) {
-    const response = await fetch(`/api/milestones/${projectId}`, {
+  const getMilestones = projectId => {
+    fetch(`/api/milestones/${projectId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
-    setMilestoneValues(data);
-  }
+    })
+      .then(res => res.json())
+      .then(res => setMilestoneValues(res))
+      .then(() => getProject(projectId))
+      .catch(err => console.error('Error:', err));
+  };
 
   const postTasks = newTasks => {
     fetch('/api/tasks', {
@@ -196,7 +197,6 @@ export default function View(props) {
   return (
     <div>
       <Navbar />
-      <Breadcrumb />
       <ProjectView projectId={props.projectId} />
     </div>
   );
