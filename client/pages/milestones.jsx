@@ -3,7 +3,7 @@ import Navbar from '../components/navbar';
 import PageTitle from '../components/pagetitle';
 
 function MilestoneForm(props) {
-  const [pageTitle] = useState('Project Name');
+  const [pageTitle] = useState('Add Milestones');
   const [projectId, setProjectId] = useState(parseInt(props.projectId));
   const [milestoneCounter, setMilestoneCounter] = useState(1);
   const [milestoneValues, setMilestoneValues] = useState([

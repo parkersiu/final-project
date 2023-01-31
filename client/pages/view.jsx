@@ -3,9 +3,12 @@ import Navbar from '../components/navbar';
 import PageTitle from '../components/pagetitle';
 import Cards from '../components/cards';
 import TaskModal from '../components/taskmodal';
+import GrowSpinner from '../components/grow-spinner';
 
 function ProjectView(props) {
-  const [pageTitle, setPageTitle] = useState('Project Name');
+  const [milestoneLoading, setMilestoneLoading] = useState(true);
+  const [taskLoading, setTaskLoading] = useState(true);
+  const [pageTitle, setPageTitle] = useState('Loading...');
   const [projectId] = useState(parseInt(props.projectId));
   const [currentTask, setCurrentTask] = useState({
     taskName: '',
@@ -109,23 +112,41 @@ function ProjectView(props) {
     }
   };
 
-  async function getTasks(projectId) {
+  /* async function getTasks(projectId) {
+    setTaskLoading(true);
     const response = await fetch(`/api/tasks/${projectId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json();
     setTaskValues(data);
-  }
+    setTaskLoading(false);
+  } */
+  const getTasks = projectId => {
+    setTaskLoading(true);
+    fetch(`api/tasks/${projectId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setTaskValues(data);
+        setTaskLoading(false);
+      })
+      .catch(err => console.error('Error:', err));
+  };
 
   const getMilestones = projectId => {
+    setMilestoneLoading(true);
     fetch(`/api/milestones/${projectId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     })
       .then(res => res.json())
-      .then(res => setMilestoneValues(res))
-      .then(() => getProject(projectId))
+      .then(res => {
+        setMilestoneValues(res);
+        setMilestoneLoading(false);
+      })
       .catch(err => console.error('Error:', err));
   };
 
@@ -170,9 +191,12 @@ function ProjectView(props) {
   };
 
   useEffect(() => {
-    getMilestones(projectId);
-    getTasks(projectId);
-    getProject(projectId);
+    const loadProjectData = async () => {
+      await getMilestones(projectId);
+      await getTasks(projectId);
+      await getProject(projectId);
+    };
+    loadProjectData();
   }, [projectId]);
 
   return (
@@ -183,9 +207,12 @@ function ProjectView(props) {
       <div className='container'>
         <div className='row d-flex flex-nowrap overflow-x-auto'>
           <div className='col' />
-          <Cards milestoneValues={milestoneValues} taskValues={taskValues}
+          {milestoneLoading
+            ? <GrowSpinner />
+            : <Cards milestoneValues={milestoneValues} taskValues={taskValues}
             click={handleAddTask} change={handleComplete} edit={handleEditTask}
-            currentTask={currentTask} />
+            currentTask={currentTask} taskLoading={taskLoading} />
+            }
           <div className='col' />
         </div>
       </div>
