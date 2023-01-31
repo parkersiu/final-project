@@ -3,6 +3,7 @@ import Projects from './pages/projects';
 import Milestones from './pages/milestones';
 import View from './pages/view';
 import NotFound from './pages/not-found';
+import About from './pages/about';
 import { parseRoute } from './lib/';
 
 export default class App extends React.Component {
@@ -35,6 +36,9 @@ export default class App extends React.Component {
     if (route.path === 'view') {
       const projectId = route.params.get('projectId');
       return <View projectId={projectId} />;
+    }
+    if (route.path === 'about') {
+      return <About />;
     }
     return <NotFound />;
   }

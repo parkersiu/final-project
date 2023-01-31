@@ -24,7 +24,7 @@ export default function Navbar(props) {
                 <a className="nav-link nav-text" href='#'>Projects</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link nav-text" href='#'>About</a>
+                <a className="nav-link nav-text" href='#about'>About</a>
               </li>
             </ul>
             <button className="btn btn-outline-primary me-2 nav-button" type="button" onClick={handleShow}>Register</button>
