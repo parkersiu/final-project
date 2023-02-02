@@ -4,7 +4,8 @@ import RegisterModal from './registermodal';
 export default function Navbar(props) {
   const [show, setShow] = useState(false);
   const [type, setType] = useState('');
-  const [setUserToken] = useState();
+  // eslint-disable-next-line
+  const [userToken, setUserToken] = useState();
   const handleShowRegister = () => {
     setShow(true);
     setType('Register');
