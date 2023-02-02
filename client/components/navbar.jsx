@@ -6,6 +6,7 @@ export default function Navbar(props) {
   const [type, setType] = useState('');
   // eslint-disable-next-line
   const [userToken, setUserToken] = useState();
+
   const handleShowRegister = () => {
     setShow(true);
     setType('Register');

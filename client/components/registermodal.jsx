@@ -51,23 +51,24 @@ export default function RegisterModal(props) {
     return (
       <Modal show={show} onHide={onClose}>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Modal.Header closeButton>
-            <Modal.Title>Sign Up</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group>
-              <Form.Label htmlFor="email">Email</Form.Label>
-              <Form.Control
+          <fieldset disabled>
+            <Modal.Header closeButton>
+              <Modal.Title>Sign Up</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label htmlFor="email">Email</Form.Label>
+                <Form.Control
             required
             type="email"
             id="email"
             placeholder="email@example.com"
             onChange={event => setUsername(event.target.value)}
             />
-            </Form.Group>
-            <Form.Group className='mt-1'>
-              <Form.Label htmlFor="password">Password</Form.Label>
-              <Form.Control
+              </Form.Group>
+              <Form.Group className='mt-1'>
+                <Form.Label htmlFor="password">Password</Form.Label>
+                <Form.Control
             required
             type="password"
             id="password"
@@ -75,16 +76,17 @@ export default function RegisterModal(props) {
             maxLength={20}
             onChange={event => setPassword(event.target.value)}
             />
-              <Form.Text id="password" muted>
-                Your password must be 8-20 characters long.
-              </Form.Text>
-            </Form.Group>
-          </Modal.Body>
+                <Form.Text id="password" muted>
+                  Your password must be 8-20 characters long.
+                </Form.Text>
+              </Form.Group>
+            </Modal.Body>
+          </fieldset>
           <Modal.Footer>
             <Button variant="secondary" onClick={onClose}>
               Close
             </Button>
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="primary" disabled>
               Register
             </Button>
           </Modal.Footer>
