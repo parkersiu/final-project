@@ -58,18 +58,24 @@ export default function RegisterModal(props) {
             </Modal.Header>
             <Modal.Body>
               <Form.Group>
-                <Form.Label htmlFor="email">Email</Form.Label>
-                <Form.Control
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-disabled">Disabled for demo</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="email">Email</Form.Label>
+                    <Form.Control
             required
             type="email"
             id="email"
             placeholder="email@example.com"
             onChange={event => setUsername(event.target.value)}
             />
+                  </span>
+                </OverlayTrigger>
               </Form.Group>
               <Form.Group className='mt-1'>
-                <Form.Label htmlFor="password">Password</Form.Label>
-                <Form.Control
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-disabled">Disabled for demo</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="password">Password</Form.Label>
+                    <Form.Control
             required
             type="password"
             id="password"
@@ -77,6 +83,8 @@ export default function RegisterModal(props) {
             maxLength={20}
             onChange={event => setPassword(event.target.value)}
             />
+                  </span>
+                </OverlayTrigger>
                 <Form.Text id="password" muted>
                   Your password must be 8-20 characters long.
                 </Form.Text>
@@ -87,7 +95,7 @@ export default function RegisterModal(props) {
             <Button variant="secondary" onClick={onClose}>
               Close
             </Button>
-            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Disabled for demo</Tooltip>}>
+            <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-disabled">Disabled for demo</Tooltip>}>
               <span className='d-inline-block'>
                 <Button type="submit" variant="primary" disabled style={{ pointerEvents: 'none' }}>
                   Register
@@ -109,8 +117,10 @@ export default function RegisterModal(props) {
             </Modal.Header>
             <Modal.Body>
               <Form.Group>
-                <Form.Label htmlFor="email">Email</Form.Label>
-                <Form.Control
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-disabled">Demo username</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="email">Email</Form.Label>
+                    <Form.Control
                 required
                 type="email"
                 id="email"
@@ -118,10 +128,14 @@ export default function RegisterModal(props) {
                 value={username}
                 onChange={event => setUsername(event.target.value)}
               />
+                  </span>
+                </OverlayTrigger>
               </Form.Group>
               <Form.Group className='mt-1'>
-                <Form.Label htmlFor="password">Password</Form.Label>
-                <Form.Control
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-disabled">Demo password</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="password">Password</Form.Label>
+                    <Form.Control
                 required
                 type="password"
                 id="password"
@@ -130,6 +144,8 @@ export default function RegisterModal(props) {
                 maxLength={20}
                 onChange={event => setPassword(event.target.value)}
               />
+                  </span>
+                </OverlayTrigger>
                 <Form.Text id="password" muted>
                   Your password must be 8-20 characters long.
                 </Form.Text>
