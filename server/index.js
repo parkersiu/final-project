@@ -100,6 +100,29 @@ app.get('/api/milestones/:projectId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/projects/user/:userId', (req, res, next) => {
+  const userId = Number(req.params.userId);
+  if (!userId) {
+    throw new ClientError(400, 'userId must be a positive integer');
+  }
+  const sql = `
+    select "projectId",
+           "title",
+           "description"
+      from "projects"
+     where "userId" = $1
+  `;
+  const params = [userId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find projects for userId ${userId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
 app.post('/api/projects', (req, res, next) => {
   const { title, description } = req.body;
   const userId = parseInt(req.body.userId);
