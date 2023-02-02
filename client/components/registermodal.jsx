@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line
-import { InputGroup, Modal, Button, Form } from 'react-bootstrap';
+import { InputGroup, Modal, Button, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export default function RegisterModal(props) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('demo@user.com');
+  const [password, setPassword] = useState('demouserpw');
   const [validated, setValidated] = useState(false);
   const { show, onClose, setToken } = props;
 
@@ -24,7 +24,8 @@ export default function RegisterModal(props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user)
     })
-      .then(res => res.json());
+      .then(res => res.json())
+      .catch(err => console.error('Error:', err));
   }
 
   const handleSubmit = async event => {
@@ -86,9 +87,13 @@ export default function RegisterModal(props) {
             <Button variant="secondary" onClick={onClose}>
               Close
             </Button>
-            <Button type="submit" variant="primary" disabled>
-              Register
-            </Button>
+            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Disabled for demo</Tooltip>}>
+              <span className='d-inline-block'>
+                <Button type="submit" variant="primary" disabled style={{ pointerEvents: 'none' }}>
+                  Register
+                </Button>
+              </span>
+            </OverlayTrigger>
           </Modal.Footer>
         </Form>
       </Modal>
@@ -98,35 +103,39 @@ export default function RegisterModal(props) {
     return (
       <Modal show={show} onHide={onClose}>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Modal.Header closeButton>
-            <Modal.Title>Log In</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group>
-              <Form.Label htmlFor="email">Email</Form.Label>
-              <Form.Control
+          <fieldset disabled>
+            <Modal.Header closeButton>
+              <Modal.Title>Log In</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label htmlFor="email">Email</Form.Label>
+                <Form.Control
                 required
                 type="email"
                 id="email"
                 placeholder="email@example.com"
+                value={username}
                 onChange={event => setUsername(event.target.value)}
               />
-            </Form.Group>
-            <Form.Group className='mt-1'>
-              <Form.Label htmlFor="password">Password</Form.Label>
-              <Form.Control
+              </Form.Group>
+              <Form.Group className='mt-1'>
+                <Form.Label htmlFor="password">Password</Form.Label>
+                <Form.Control
                 required
                 type="password"
                 id="password"
+                value={password}
                 minLength={8}
                 maxLength={20}
                 onChange={event => setPassword(event.target.value)}
               />
-              <Form.Text id="password" muted>
-                Your password must be 8-20 characters long.
-              </Form.Text>
-            </Form.Group>
-          </Modal.Body>
+                <Form.Text id="password" muted>
+                  Your password must be 8-20 characters long.
+                </Form.Text>
+              </Form.Group>
+            </Modal.Body>
+          </fieldset>
           <Modal.Footer>
             <Button variant="secondary" onClick={onClose}>
               Close
