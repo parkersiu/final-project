@@ -3,12 +3,39 @@ import RegisterModal from './registermodal';
 
 export default function Navbar(props) {
   const [show, setShow] = useState(false);
-  const handleShow = () => setShow(true);
+  const [type, setType] = useState('');
+  const [setUserToken] = useState();
+  const handleShowRegister = () => {
+    setShow(true);
+    setType('Register');
+  };
+  const handleShowLogin = () => {
+    setShow(true);
+    setType('Login');
+  };
   const handleClose = () => setShow(false);
+
+  const setToken = userToken => {
+    sessionStorage.setItem('token', JSON.stringify(userToken));
+    setUserToken(userToken);
+  };
+
+  const getToken = () => {
+    const tokenString = sessionStorage.getItem('token');
+    const userToken = JSON.parse(tokenString);
+    return userToken;
+  };
+
+  const token = getToken();
+
+  const logout = () => {
+    sessionStorage.clear();
+    setUserToken();
+  };
 
   return (
     <div>
-      <RegisterModal show={show} onClose={handleClose} />
+      <RegisterModal show={show} type={type} onClose={handleClose} setToken={setToken} />
       <nav className="navbar navbar-expand-lg navbar-dark">
         <div className="container-fluid">
           <a className="navbar-brand text-white" href="#">Milestone</a>
@@ -27,8 +54,13 @@ export default function Navbar(props) {
                 <a className="nav-link nav-text" href='#about'>About</a>
               </li>
             </ul>
-            <button className="btn btn-outline-primary me-2 nav-button" type="button" onClick={handleShow}>Register</button>
-            <button className="btn btn-outline-success ms-2 nav-button" type="button">Log In</button>
+            {token
+              ? <button className='btn btn-outline-primary nav-button p-2' type='button' onClick={logout}>Sign Out</button>
+              : <div>
+                <button className="btn btn-outline-primary me-2 nav-button" type="button" onClick={handleShowRegister}>Register</button>
+                <button className="btn btn-outline-success ms-2 nav-button" type="button" onClick={handleShowLogin}>Log In</button>
+              </div>
+            }
           </div>
         </div>
       </nav>
