@@ -112,16 +112,6 @@ function ProjectView(props) {
     }
   };
 
-  /* async function getTasks(projectId) {
-    setTaskLoading(true);
-    const response = await fetch(`/api/tasks/${projectId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
-    setTaskValues(data);
-    setTaskLoading(false);
-  } */
   const getTasks = projectId => {
     setTaskLoading(true);
     fetch(`api/tasks/${projectId}`, {
