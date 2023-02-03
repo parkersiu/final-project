@@ -4,6 +4,7 @@ import Milestones from './pages/milestones';
 import View from './pages/view';
 import NotFound from './pages/not-found';
 import About from './pages/about';
+import ProjectsList from './pages/projects-list';
 import { parseRoute } from './lib/';
 
 export default class App extends React.Component {
@@ -39,6 +40,9 @@ export default class App extends React.Component {
     }
     if (route.path === 'about') {
       return <About />;
+    }
+    if (route.path === 'projects') {
+      return <ProjectsList />;
     }
     return <NotFound />;
   }

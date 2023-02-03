@@ -29,3 +29,7 @@ input[type="checkbox"] {
 .strike {
   text-decoration: line-through;
 }
+
+.dash {
+  border: 1px dashed lightgrey !important;
+}

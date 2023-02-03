@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import PageTitle from '../components/pagetitle';
+import ProjectCards from '../components/project-cards';
 
 function Projects(props) {
   const [pageTitle] = useState('Projects List');
   const [userId] = useState(25);
-  const [setProjects] = useState();
+  const [projects, setProjects] = useState();
 
   const getProject = userId => {
     fetch(`api/projects/user/${userId}`, {
@@ -25,7 +26,10 @@ function Projects(props) {
   }, [userId]);
 
   return (
-    <PageTitle page={pageTitle} />
+    <>
+      <PageTitle pageTitle={pageTitle} />
+      <ProjectCards projects={projects} />
+    </>
   );
 }
 
