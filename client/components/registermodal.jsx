@@ -6,7 +6,7 @@ export default function RegisterModal(props) {
   const [username, setUsername] = useState('demo@user.com');
   const [password, setPassword] = useState('demouserpw');
   const [validated, setValidated] = useState(false);
-  const { show, onClose, setToken } = props;
+  const { show, onClose, setToken, setUser } = props;
 
   const fetchRegister = newUser => {
     fetch('/api/auth/sign-up', {
@@ -45,6 +45,7 @@ export default function RegisterModal(props) {
       const user = { username, password };
       const response = await fetchLogin(user);
       setToken(response.signedToken);
+      setUser(response.user.userId);
     }
   };
 

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import PageTitle from '../components/pagetitle';
 import ProjectCards from '../components/project-cards';
+import SignedOut from '../components/signed-out';
 
 function Projects(props) {
   const [pageTitle] = useState('Projects List');
-  const [userId] = useState(25);
   const [projects, setProjects] = useState();
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const { userId } = props;
 
   const getProject = userId => {
     setProjectsLoading(true);
@@ -27,13 +28,18 @@ function Projects(props) {
     const loadProjects = async () => {
       await getProject(userId);
     };
-    loadProjects();
+    if (userId) {
+      loadProjects();
+    }
   }, [userId]);
 
   return (
     <>
       <PageTitle pageTitle={pageTitle} />
-      <ProjectCards projects={projects} projectsLoading={projectsLoading} />
+      {userId
+        ? <ProjectCards projects={projects} projectsLoading={projectsLoading} />
+        : <SignedOut />
+      }
     </>
   );
 }
@@ -41,8 +47,8 @@ function Projects(props) {
 export default function ProjectsList(props) {
   return (
     <div>
-      <Navbar />
-      <Projects />
+      <Navbar setUser={props.setUser} />
+      <Projects userId={props.userId} />
     </div>
   );
 }

@@ -4,20 +4,24 @@ import GrowSpinner from './grow-spinner';
 export default function ProjectCards(props) {
   const { projects, projectsLoading } = props;
 
-  const renderProjects = projects.map(projects => {
-    return (
-      <div className='col d-flex justify-content-center' key={projects.projectId}>
-        <div className='card dash'>
-          <div className='card-body'>
-            <h5 className='card-title'>{projects.title}</h5>
-            <p className='card-text'>{projects.description}</p>
-            <a className='card-link'>Card Link</a>
-            <a className='card-link'>Another link</a>
+  const renderProjects = projects => {
+    if (projects) {
+      return projects.map(project => {
+        return (
+          <div className='col d-flex justify-content-center' key={project.projectId}>
+            <div className='card'>
+              <div className='card-body'>
+                <h5 className='card-title'>{project.title}</h5>
+                <p className='card-text'>{project.description}</p>
+                <a className='card-link'>Card Link</a>
+                <a className='card-link'>Another link</a>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    );
-  });
+        );
+      });
+    }
+  };
 
   if (projectsLoading) {
     return (
@@ -42,7 +46,7 @@ export default function ProjectCards(props) {
               </div>
             </div>
           </div>
-          {renderProjects}
+          {renderProjects(projects)}
         </div>
       </div>
     );

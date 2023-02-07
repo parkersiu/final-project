@@ -33,11 +33,12 @@ export default function Navbar(props) {
   const logout = () => {
     sessionStorage.clear();
     setUserToken();
+    props.setUser(null);
   };
 
   return (
     <div>
-      <RegisterModal show={show} type={type} onClose={handleClose} setToken={setToken} />
+      <RegisterModal show={show} type={type} onClose={handleClose} setToken={setToken} setUser={props.setUser} />
       <nav className="navbar navbar-expand-lg navbar-dark">
         <div className="container-fluid">
           <a className="navbar-brand text-white" href="#">Milestone</a>

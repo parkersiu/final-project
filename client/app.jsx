@@ -12,8 +12,14 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       route: parseRoute(window.location.hash),
-      pageTitle: ''
+      pageTitle: '',
+      userId: null
     };
+    this.setUser = this.setUser.bind(this);
+  }
+
+  setUser(userId) {
+    this.setState({ userId });
   }
 
   componentDidMount() {
@@ -28,21 +34,21 @@ export default class App extends React.Component {
   renderPage() {
     const { route } = this.state;
     if (route.path === '') {
-      return <Projects />;
+      return <Projects setUser={this.setUser} />;
     }
     if (route.path === 'milestones') {
       const projectId = route.params.get('projectId');
-      return <Milestones projectId={projectId} />;
+      return <Milestones projectId={projectId} setUser={this.setUser} />;
     }
     if (route.path === 'view') {
       const projectId = route.params.get('projectId');
-      return <View projectId={projectId} />;
+      return <View projectId={projectId} setUser={this.setUser} />;
     }
     if (route.path === 'about') {
       return <About />;
     }
     if (route.path === 'projects') {
-      return <ProjectsList />;
+      return <ProjectsList userId={this.state.userId} setUser={this.setUser} />;
     }
     return <NotFound />;
   }
