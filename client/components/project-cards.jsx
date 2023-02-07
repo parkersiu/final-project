@@ -13,8 +13,7 @@ export default function ProjectCards(props) {
               <div className='card-body'>
                 <h5 className='card-title'>{project.title}</h5>
                 <p className='card-text'>{project.description}</p>
-                <a className='card-link'>Card Link</a>
-                <a className='card-link'>Another link</a>
+                <a className='card-link' href={`#view?projectId=${project.projectId}`}>View</a>
               </div>
             </div>
           </div>
@@ -38,11 +37,9 @@ export default function ProjectCards(props) {
           <div className='col d-flex justify-content-center'>
             <div className='card dash'>
               <div className='card-body'>
-                <h5 className='card-title'>Create a card</h5>
-                <p className='card-text'>Some quick example text to build on the card
-                  title and make up the bulk of the card&apos;s content</p>
-                <a className='card-link'>Card Link</a>
-                <a className='card-link'>Another link</a>
+                <h5 className='card-title'>New Project</h5>
+                <p className='card-text'>Click the link below to create a new project.</p>
+                <a className='card-link'>Create</a>
               </div>
             </div>
           </div>
