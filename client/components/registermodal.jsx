@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line
-import { InputGroup, Modal, Button, Form } from 'react-bootstrap';
+import { InputGroup, Modal, Button, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export default function RegisterModal(props) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('demo@user.com');
+  const [password, setPassword] = useState('demouserpw');
   const [validated, setValidated] = useState(false);
-  const { show, onClose } = props;
+  const { show, onClose, setToken, setUser } = props;
 
   const fetchRegister = newUser => {
     fetch('/api/auth/sign-up', {
@@ -18,66 +18,151 @@ export default function RegisterModal(props) {
       .catch(err => console.error('Error:', err));
   };
 
-  const handleInput = event => {
-    if (event.target.id === 'email') {
-      setUsername(event.target.value);
-    }
-    if (event.target.id === 'password') {
-      setPassword(event.target.value);
-    }
-  };
+  async function fetchLogin(user) {
+    return fetch('/api/auth/sign-in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    })
+      .then(res => res.json())
+      .catch(err => console.error('Error:', err));
+  }
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
+    if (!form.checkValidity()) {
       event.preventDefault();
     }
-    setValidated(true);
-    const newUser = { username, password };
-    fetchRegister(newUser);
+    if (form.checkValidity()) {
+      setValidated(true);
+      onClose();
+    }
+    if (props.type === 'Register') {
+      const newUser = { username, password };
+      await fetchRegister(newUser);
+    }
+    if (props.type === 'Login') {
+      const user = { username, password };
+      const response = await fetchLogin(user);
+      setToken(response.signedToken);
+      setUser(response.user.userId);
+    }
   };
 
-  return (
-    <Modal show={show} onHide={onClose}>
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <Modal.Header closeButton>
-          <Modal.Title>Sign Up</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group>
-            <Form.Label htmlFor="email">Email</Form.Label>
-            <Form.Control
+  if (props.type === 'Register') {
+    return (
+      <Modal show={show} onHide={onClose}>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <fieldset disabled>
+            <Modal.Header closeButton>
+              <Modal.Title>Sign Up</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-username-reg">Disabled for demo</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="email">Email</Form.Label>
+                    <Form.Control
             required
             type="email"
             id="email"
             placeholder="email@example.com"
-            onChange={handleInput}
+            onChange={event => setUsername(event.target.value)}
             />
-          </Form.Group>
-          <Form.Group className='mt-1'>
-            <Form.Label htmlFor="password">Password</Form.Label>
-            <Form.Control
+                  </span>
+                </OverlayTrigger>
+              </Form.Group>
+              <Form.Group className='mt-1'>
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-password-reg">Disabled for demo</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="password">Password</Form.Label>
+                    <Form.Control
             required
             type="password"
             id="password"
             minLength={8}
             maxLength={20}
-            onChange={handleInput}
+            onChange={event => setPassword(event.target.value)}
             />
-            <Form.Text id="password" muted>
-              Your password must be 8-20 characters long.
-            </Form.Text>
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onClose}>
-            Close
-          </Button>
-          <Button type="submit" variant="primary">
-            Register
-          </Button>
-        </Modal.Footer>
-      </Form>
-    </Modal>
-  );
+                  </span>
+                </OverlayTrigger>
+                <Form.Text id="password" muted>
+                  Your password must be 8-20 characters long.
+                </Form.Text>
+              </Form.Group>
+            </Modal.Body>
+          </fieldset>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onClose}>
+              Close
+            </Button>
+            <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-disabled-submit">Disabled for demo</Tooltip>}>
+              <span className='d-inline-block'>
+                <Button type="submit" variant="primary" disabled style={{ pointerEvents: 'none' }}>
+                  Register
+                </Button>
+              </span>
+            </OverlayTrigger>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  }
+  if (props.type === 'Login') {
+    return (
+      <Modal show={show} onHide={onClose}>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <fieldset disabled>
+            <Modal.Header closeButton>
+              <Modal.Title>Log In</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-username">Demo username</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="email">Email</Form.Label>
+                    <Form.Control
+                required
+                type="email"
+                id="email"
+                placeholder="email@example.com"
+                value={username}
+                onChange={event => setUsername(event.target.value)}
+              />
+                  </span>
+                </OverlayTrigger>
+              </Form.Group>
+              <Form.Group className='mt-1'>
+                <OverlayTrigger placement='bottom' overlay={<Tooltip id="tooltip-password">Demo password</Tooltip>}>
+                  <span>
+                    <Form.Label htmlFor="password">Password</Form.Label>
+                    <Form.Control
+                required
+                type="password"
+                id="password"
+                value={password}
+                minLength={8}
+                maxLength={20}
+                onChange={event => setPassword(event.target.value)}
+              />
+                  </span>
+                </OverlayTrigger>
+                <Form.Text id="password" muted>
+                  Your password must be 8-20 characters long.
+                </Form.Text>
+              </Form.Group>
+            </Modal.Body>
+          </fieldset>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onClose}>
+              Close
+            </Button>
+            <Button type="submit" variant="primary">
+              Log In
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  }
 }

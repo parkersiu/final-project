@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
-import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 
 function Form(props) {
@@ -64,7 +63,6 @@ export default function Projects(props) {
   return (
     <div>
       <Navbar />
-      <Breadcrumb />
       <Form projectId={props.projectId} />
     </div>
   );

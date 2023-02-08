@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
-import Breadcrumb from '../components/breadcrumb';
 import PageTitle from '../components/pagetitle';
 
 function MilestoneForm(props) {
-  const [pageTitle] = useState('Project Name');
+  const [pageTitle] = useState('Add Milestones');
   const [projectId, setProjectId] = useState(parseInt(props.projectId));
   const [milestoneCounter, setMilestoneCounter] = useState(1);
   const [milestoneValues, setMilestoneValues] = useState([
@@ -68,11 +67,12 @@ function MilestoneForm(props) {
       const data = await response.json();
       const newProjectId = data.projectId;
       setProjectId(newProjectId);
-      window.location.href = `#view?projectId=${projectId}?projectTitle=${pageTitle}`;
+      window.location.href = `#view?projectId=${projectId}`;
     }
     for (let i = 0; i < milestoneValues.length; i++) {
       const milestoneName = milestoneValues[i].milestoneName;
-      const newMilestone = { milestoneName, projectId };
+      const milestoneIndex = i;
+      const newMilestone = { milestoneName, projectId, milestoneIndex };
       addMilestone(newMilestone);
     }
   };
@@ -83,12 +83,12 @@ function MilestoneForm(props) {
       <div className='container'>
         <div className='row'>
           <div className='col' />
-          <div className='col-6 mt-2 ms-5 mb-2'>Milestones:</div>
+          <div className='col-8 mt-2 ms-5 mb-2'>Milestones:</div>
           <div className='col' />
         </div>
         <div className='row'>
           <div className='col' />
-          <div className='col'>
+          <div className='col-7'>
             <form onSubmit={handleSubmit}>
               {inputsLoop()}
               <i className="fa-solid fa-plus mt-2 ms-2" onClick={handleAddInput} />
@@ -106,7 +106,6 @@ export default function Milestones(props) {
   return (
     <div>
       <Navbar />
-      <Breadcrumb />
       <MilestoneForm projectId={props.projectId} />
     </div>
   );

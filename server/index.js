@@ -5,6 +5,7 @@ const ClientError = require('./client-error');
 const staticMiddleware = require('./static-middleware');
 const errorMiddleware = require('./error-middleware');
 const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -82,15 +83,40 @@ app.get('/api/milestones/:projectId', (req, res, next) => {
            "milestoneName",
            "dueDate",
            "projectId",
-           "isDeleted"
+           "isDeleted",
+           "milestoneIndex"
       from "milestones"
      where "projectId" = $1
+     order by "milestoneIndex"
   `;
   const params = [projectId];
   db.query(sql, params)
     .then(result => {
       if (!result.rows) {
         throw new ClientError(404, `cannot find project with projectId ${projectId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
+app.get('/api/projects/user/:userId', (req, res, next) => {
+  const userId = Number(req.params.userId);
+  if (!userId) {
+    throw new ClientError(400, 'userId must be a positive integer');
+  }
+  const sql = `
+    select "projectId",
+           "title",
+           "description"
+      from "projects"
+     where "userId" = $1
+  `;
+  const params = [userId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find projects for userId ${userId}`);
       }
       res.json(result.rows);
     })
@@ -121,20 +147,24 @@ app.post('/api/projects', (req, res, next) => {
 });
 
 app.post('/api/milestones', (req, res, next) => {
-  const { milestoneName, projectId } = req.body;
+  const { milestoneName, projectId, milestoneIndex } = req.body;
   parseInt(projectId);
+  parseInt(milestoneIndex);
   if (!milestoneName || !projectId) {
     throw new ClientError(400, 'milestoneName and projectId are required fields');
   }
   if (!Number.isInteger(projectId) || projectId < 0) {
     throw new ClientError(400, 'projectId must be a positive integer');
   }
+  if (!Number.isInteger(milestoneIndex)) {
+    throw new ClientError(400, 'milestoneIndex must be an integer');
+  }
   const sql = `
-  insert into "milestones" ("milestoneName", "projectId")
-  values ($1, $2)
+  insert into "milestones" ("milestoneName", "projectId", "milestoneIndex")
+  values ($1, $2, $3)
   returning *
   `;
-  const params = [milestoneName, projectId];
+  const params = [milestoneName, projectId, milestoneIndex];
   db.query(sql, params)
     .then(result => {
       const [newMilestone] = result.rows;
@@ -213,6 +243,39 @@ app.patch('/api/tasks/:taskId', (req, res, next) => {
       res.json(result.rows);
     })
     .catch(err => next(err));
+});
+
+app.post('/api/auth/sign-in', (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ClientError(401, 'invalid login');
+  }
+  const sql = `
+  select "userId",
+         "username",
+         "password"
+  from   "users"
+  where  "username" = $1`;
+  const params = [username];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows[0]) {
+        throw new ClientError(401, 'invalid login');
+      }
+      const hashedPassword = result.rows[0].password;
+      argon2
+        .verify(hashedPassword, password)
+        .then(isMatching => {
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid login');
+          }
+          const [user] = result.rows;
+          const signedToken = jwt.sign(user, process.env.TOKEN_SECRET);
+          const auth = { signedToken, user };
+          res.status(200).json(auth);
+        })
+        .catch(err => next(err));
+    });
 });
 
 app.use(errorMiddleware);

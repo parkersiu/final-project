@@ -47,6 +47,7 @@ CREATE TABLE "public"."milestones" (
 	"projectId" integer NOT NULL,
 	"isDeleted" BOOLEAN NOT NULL DEFAULT 'false',
 	"createdAt" timestamp with time zone NOT NULL DEFAULT 'now()',
+  "milestoneInteger" integer,
 	CONSTRAINT "milestones_pk" PRIMARY KEY ("milestoneId")
 ) WITH (
   OIDS=FALSE
