@@ -39,7 +39,7 @@ export default function ProjectCards(props) {
               <div className='card-body'>
                 <h5 className='card-title'>New Project</h5>
                 <p className='card-text'>Click the link below to create a new project.</p>
-                <a className='card-link'>Create</a>
+                <a className='card-link' href='#'>Create</a>
               </div>
             </div>
           </div>
