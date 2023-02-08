@@ -9,7 +9,8 @@ export default function About() {
         <div className="text-center">
           <h1 className="display-1 fw-bold">About</h1>
           <p className="lead">
-            Thank you for visiting my first full stack React application, Milestone.
+            Milestone is a full stack React application created by <a className='about-link' target="_blank" href='https://www.linkedin.com/in/parkersiu/' rel="noreferrer">Parker Siu</a>.
+            Please view the source on <a className='about-link' target="_blank" href='https://github.com/parkersiu/final-project' rel="noreferrer">GitHub</a>.
           </p>
           <a href="#" className="btn btn-primary">Go Home</a>
         </div>

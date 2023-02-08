@@ -33,3 +33,7 @@ input[type="checkbox"] {
 .dash {
   border: 1px dashed lightgrey !important;
 }
+
+.about-link {
+  text-decoration: none;
+}
