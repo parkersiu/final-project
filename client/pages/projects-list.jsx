@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
-import PageTitle from '../components/pagetitle';
+import PageTitle from '../components/page-title';
 import ProjectCards from '../components/project-cards';
 import SignedOut from '../components/signed-out';
 

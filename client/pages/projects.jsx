@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
-import PageTitle from '../components/pagetitle';
+import PageTitle from '../components/page-title';
 
 function Form(props) {
   const [pageTitle] = useState('Create a project');

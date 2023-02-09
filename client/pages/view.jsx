@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
-import PageTitle from '../components/pagetitle';
+import PageTitle from '../components/page-title';
 import Cards from '../components/cards';
-import TaskModal from '../components/taskmodal';
+import TaskModal from '../components/task-modal';
 import GrowSpinner from '../components/grow-spinner';
 
 function ProjectView(props) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RegisterModal from './registermodal';
+import RegisterModal from './register-modal';
 
 export default function Navbar(props) {
   const [show, setShow] = useState(false);
