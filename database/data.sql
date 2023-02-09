@@ -44,4 +44,4 @@ values ('Task 2', 3, 8)
 values ('Task 3', 3, 8)
 values ('Task 1', 3, 9)
 values ('Task 2', 3, 9)
-values ('Task 3', 3, 9)
+values ('Task 3', 3, 9);
