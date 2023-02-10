@@ -105,7 +105,7 @@ function MilestoneForm(props) {
 export default function Milestones(props) {
   return (
     <div>
-      <Navbar />
+      <Navbar setUser={props.setUser} />
       <MilestoneForm projectId={props.projectId} />
     </div>
   );

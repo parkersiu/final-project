@@ -62,7 +62,7 @@ function Form(props) {
 export default function Projects(props) {
   return (
     <div>
-      <Navbar />
+      <Navbar setUser={props.setUser} />
       <Form projectId={props.projectId} />
     </div>
   );
