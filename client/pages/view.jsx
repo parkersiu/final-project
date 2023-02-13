@@ -42,7 +42,6 @@ function ProjectView(props) {
     const taskId = taskValues[taskIndex].taskId;
     task.isDeleted = true;
     deleteTask(task, taskId);
-    taskValues.map();
     setTaskValues(
       taskValues.filter((_, i) => i !== taskIndex)
     );
@@ -60,29 +59,17 @@ function ProjectView(props) {
   };
 
   const handleComplete = event => {
-    const taskIndex = parseInt(event.target.getAttribute('id'));
-    const complete = taskValues[taskIndex].isCompleted;
+    const inputChild = event.target.previousSibling;
+    const inputTaskId = parseInt(inputChild.getAttribute('data-taskid'));
+    const task = taskValues.find(({ taskId }) => taskId === inputTaskId);
+    const complete = task.isCompleted;
     if (complete) {
-      setTaskValues(
-        milestoneValues.map((element, i) => {
-          if (i === taskIndex) {
-            return { ...element, isCompleted: !complete, className: 'form-check-label' };
-          } else {
-            return element;
-          }
-        })
-      );
+      patchTask({ taskName: task.taskName, isDeleted: false, isCompleted: false }, inputTaskId);
+      getTasks(projectId);
     }
     if (!complete) {
-      setTaskValues(
-        milestoneValues.map((element, i) => {
-          if (i === taskIndex) {
-            return { ...element, isCompleted: !complete, className: 'form-check-label strike' };
-          } else {
-            return element;
-          }
-        })
-      );
+      patchTask({ taskName: task.taskName, isDeleted: false, isCompleted: true }, inputTaskId);
+      getTasks(projectId);
     }
   };
 
@@ -150,11 +137,11 @@ function ProjectView(props) {
       .catch(err => console.error('Error:', err));
   };
 
-  const patchTask = (taskName, taskId) => {
+  const patchTask = (task, taskId) => {
     fetch(`api/tasks/${taskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(taskName)
+      body: JSON.stringify(task)
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));
@@ -200,7 +187,7 @@ function ProjectView(props) {
           {milestoneLoading
             ? <GrowSpinner />
             : <Cards milestoneValues={milestoneValues} taskValues={taskValues}
-            click={handleAddTask} change={handleComplete} edit={handleEditTask}
+            click={handleAddTask} complete={handleComplete} edit={handleEditTask}
             currentTask={currentTask} taskLoading={taskLoading} />
             }
           <div className='col' />

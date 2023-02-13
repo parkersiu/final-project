@@ -61,6 +61,7 @@ app.get('/api/tasks/:projectId', (req, res, next) => {
            "isDeleted"
       from "tasks"
      where "projectId" = $1
+     order by "taskId"
   `;
   const params = [projectId];
   db.query(sql, params)
@@ -223,18 +224,19 @@ app.post('/api/auth/sign-up', (req, res, next) => {
 
 app.patch('/api/tasks/:taskId', (req, res, next) => {
   const taskId = Number(req.params.taskId);
-  const { taskName, isDeleted } = req.body;
+  const { taskName, isDeleted, isCompleted } = req.body;
   if (!taskId || taskId < 1) {
     throw new ClientError(400, 'taskId is required and must be a positive integer');
   }
   const sql = `
     update "tasks"
       set "taskName" = $1,
-      "isDeleted"    = $2
-      where "taskId" = $3
+      "isDeleted"    = $2,
+      "isCompleted"  = $3
+      where "taskId" = $4
     returning *
   `;
-  const params = [taskName, isDeleted, taskId];
+  const params = [taskName, isDeleted, isCompleted, taskId];
   db.query(sql, params)
     .then(result => {
       if (!result.rows) {
