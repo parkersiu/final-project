@@ -85,7 +85,7 @@ function ProjectView(props) {
   const handleSubmitTask = event => {
     event.preventDefault();
     const milestoneId = currentTask.milestoneId;
-    const task = { taskName: currentTask.taskName, isDeleted: currentTask.isDeleted };
+    const task = { taskName: currentTask.taskName, isDeleted: currentTask.isDeleted, isCompleted: false };
     const newTask = { taskName: currentTask.taskName, isCompleted: false, className: 'form-check-label', projectId, milestoneId };
     if (currentTask.newTask) {
       setTaskValues([
@@ -93,11 +93,13 @@ function ProjectView(props) {
         newTask
       ]);
       postTasks(newTask);
+      getTasks(projectId);
     }
     if (!currentTask.newTask) {
       setTaskValues([...taskValues]);
       const taskId = parseInt(currentTask.taskId);
       patchTask(task, taskId);
+      getTasks(projectId);
     }
   };
 
