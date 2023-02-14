@@ -173,9 +173,9 @@ function ProjectView(props) {
 
   useEffect(() => {
     const loadProjectData = async () => {
+      await getProject(projectId);
       await getMilestones(projectId);
       await getTasks(projectId);
-      await getProject(projectId);
     };
     loadProjectData();
   }, [projectId]);
