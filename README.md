@@ -56,7 +56,7 @@ Try the application live at [https://milestone.parkersiu.com/](https://milestone
 1. Clone the repository.
 
     ```shell
-    git clone https://github.com/parkersiu/final-project
+    git clone https://github.com/parkersiu/milestone
     cd final-project
     ```
 
