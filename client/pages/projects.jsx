@@ -29,7 +29,7 @@ function Form(props) {
       });
       const data = await response.json();
       const projectId = data.projectId;
-      setProjectId(projectId);
+      await setProjectId(projectId);
       window.location.href = `#milestones?projectId=${projectId}`;
     }
     fetchProject(newProject);

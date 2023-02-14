@@ -5,6 +5,9 @@ insert into "projects" ("projectId", "title", "description", "userId")
 values (1, 'Project 1', 'Project 1 dummy description.', 1),
        (2, 'Project 2', 'Project 2 dummy description', 1),
        (3, 'Project 3', 'Project 3 dummy description', 1);
+SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"projects"', 'projectId')),
+(SELECT (MAX("projectId") + 1) FROM "projects"), FALSE);
+
 
 insert into "milestones" ("milestoneId", "milestoneName", "projectId", "milestoneIndex")
 values (1, 'Dummy Milestone 1', 1, 0),
@@ -16,6 +19,9 @@ values (1, 'Dummy Milestone 1', 1, 0),
        (7, 'Dummy Milestone 1', 3, 0),
        (8, 'Dummy Milestone 2', 3, 1),
        (9, 'Dummy Milestone 3', 3, 2);
+SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"milestones"', 'milestoneId')),
+(SELECT (MAX("milestoneId") + 1) FROM "milestones"), FALSE);
+
 
 insert into "tasks" ("taskName", "projectId", "milestoneId")
 values ('Task 1', 1, 1),

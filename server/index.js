@@ -148,9 +148,9 @@ app.post('/api/projects', (req, res, next) => {
 });
 
 app.post('/api/milestones', (req, res, next) => {
-  const { milestoneName, projectId, milestoneIndex } = req.body;
-  parseInt(projectId);
-  parseInt(milestoneIndex);
+  const { milestoneName } = req.body;
+  const projectId = parseInt(req.body.projectId);
+  const milestoneIndex = parseInt(req.body.milestoneIndex);
   if (!milestoneName || !projectId) {
     throw new ClientError(400, 'milestoneName and projectId are required fields');
   }
