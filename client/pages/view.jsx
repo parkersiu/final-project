@@ -59,17 +59,19 @@ function ProjectView(props) {
   };
 
   const handleComplete = event => {
-    const inputChild = event.target.previousSibling;
-    const inputTaskId = parseInt(inputChild.getAttribute('data-taskid'));
-    const task = taskValues.find(({ taskId }) => taskId === inputTaskId);
-    const complete = task.isCompleted;
-    if (complete) {
-      patchTask({ taskName: task.taskName, isDeleted: false, isCompleted: false }, inputTaskId);
-      getTasks(projectId);
-    }
-    if (!complete) {
-      patchTask({ taskName: task.taskName, isDeleted: false, isCompleted: true }, inputTaskId);
-      getTasks(projectId);
+    if (event.target.tagName === 'LABEL') {
+      const inputChild = event.target.previousSibling;
+      const inputTaskId = parseInt(inputChild.getAttribute('data-taskid'));
+      const task = taskValues.find(({ taskId }) => taskId === inputTaskId);
+      const complete = task.isCompleted;
+      if (complete) {
+        patchTask({ taskName: task.taskName, isDeleted: false, isCompleted: false }, inputTaskId);
+        getTasks(projectId);
+      }
+      if (!complete) {
+        patchTask({ taskName: task.taskName, isDeleted: false, isCompleted: true }, inputTaskId);
+        getTasks(projectId);
+      }
     }
   };
 
