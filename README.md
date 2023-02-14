@@ -41,7 +41,7 @@ Try the application live at [https://milestone.parkersiu.com/](https://milestone
 
 ## Preview
 
-![SGT React](assets/sgt-react.gif)
+![Tasks](assets/demo-tasks.gif)
 
 ## Development
 
