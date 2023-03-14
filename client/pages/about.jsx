@@ -12,7 +12,7 @@ export default function About() {
             Milestone is a full stack React application created by <a className='about-link' target="_blank" href='https://www.linkedin.com/in/parkersiu/' rel="noreferrer">Parker Siu</a>.
             Please view the source on <a className='about-link' target="_blank" href='https://github.com/parkersiu/milestone' rel="noreferrer">GitHub</a>.
           </p>
-          <a href="#" className="btn btn-primary">Go Home</a>
+          <a href="#" className="btn btn-primary">Return Home</a>
         </div>
       </div>
     </div>
