@@ -82,6 +82,12 @@ function ProjectView(props) {
     });
   };
 
+  const handleEditMilestone = event => {
+    const milestoneId = parseInt(event.target.getAttribute('data-milestoneid'));
+    const milestoneName = event.target.value;
+    patchMilestones(milestoneId, milestoneName);
+  };
+
   const handleSubmitTask = event => {
     event.preventDefault();
     const milestoneId = currentTask.milestoneId;
@@ -128,6 +134,16 @@ function ProjectView(props) {
         setMilestoneValues(res);
         setMilestoneLoading(false);
       })
+      .catch(err => console.error('Error:', err));
+  };
+
+  const patchMilestones = (milestoneId, milestoneName) => {
+    fetch(`/api/milestones/${milestoneId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(milestoneName)
+    })
+      .then(res => res.json())
       .catch(err => console.error('Error:', err));
   };
 
@@ -192,7 +208,7 @@ function ProjectView(props) {
             ? <GrowSpinner />
             : <Cards milestoneValues={milestoneValues} taskValues={taskValues}
             click={handleAddTask} complete={handleComplete} edit={handleEditTask}
-            currentTask={currentTask} taskLoading={taskLoading} />
+            currentTask={currentTask} taskLoading={taskLoading} editMilestone={handleEditMilestone} />
             }
           <div className='col' />
         </div>

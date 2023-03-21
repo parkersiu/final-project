@@ -37,3 +37,8 @@ input[type="checkbox"] {
 .about-link {
   text-decoration: none;
 }
+
+.milestone-input {
+  background-color: #f1f2f3;
+  border: none;
+}
