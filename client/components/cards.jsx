@@ -11,7 +11,7 @@ export default function Cards(props) {
     cards.push(
       <div className='col' key={milestoneArray.milestoneId}>
         <div className='card text-bg-light mb-3 mt-3'>
-          <div className='card-header'><input className='milestone-input' type="text" defaultValue={milestoneName}
+          <div className='card-header'><input className='milestone-input' type='text' defaultValue={milestoneName}
           onChange={props.editMilestone} data-milestoneid={milestoneId} /></div>
           <ul className='list-group list-group-flush'>
             {props.taskLoading

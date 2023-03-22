@@ -84,8 +84,8 @@ function ProjectView(props) {
 
   const handleEditMilestone = event => {
     const milestoneId = parseInt(event.target.getAttribute('data-milestoneid'));
-    const milestoneName = event.target.value;
-    patchMilestones(milestoneId, milestoneName);
+    const milestone = { milestoneName: event.target.value };
+    patchMilestones(milestoneId, milestone);
   };
 
   const handleSubmitTask = event => {
@@ -137,11 +137,11 @@ function ProjectView(props) {
       .catch(err => console.error('Error:', err));
   };
 
-  const patchMilestones = (milestoneId, milestoneName) => {
+  const patchMilestones = (milestoneId, milestone) => {
     fetch(`/api/milestones/${milestoneId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(milestoneName)
+      body: JSON.stringify(milestone)
     })
       .then(res => res.json())
       .catch(err => console.error('Error:', err));
