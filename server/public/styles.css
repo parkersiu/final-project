@@ -41,4 +41,10 @@ input[type="checkbox"] {
 .milestone-input {
   background-color: #f1f2f3;
   border: none;
+  cursor: pointer;
+}
+
+.milestone-input:focus {
+  background-color: #fff;
+  cursor: text;
 }
