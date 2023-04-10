@@ -48,3 +48,14 @@ input[type="checkbox"] {
   background-color: #fff;
   cursor: text;
 }
+
+nav ul li a,
+nav ul li a::after,
+nav ul li a::before {
+  transition: all 0.5s !important;
+}
+
+nav ul li a:hover {
+  color: #fff !important;
+  transform: scale(1.01);
+}
