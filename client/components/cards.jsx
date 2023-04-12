@@ -15,15 +15,13 @@ export default function Cards(props) {
           <div className='card-header'><input className='milestone-input' type='text' defaultValue={milestoneName}
           onChange={props.editMilestone} data-milestoneid={milestoneId} />
             <i className="fa-solid fa-calendar-days float-end mt-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" />
-            {/* <button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> */}
-
             <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
               <div className="offcanvas-header">
                 <h5 className="offcanvas-title" id="offcanvasRightLabel">Assign a due date:</h5>
                 <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" />
               </div>
               <div className="offcanvas-body">
-                <ReactCalendar />
+                <ReactCalendar milestoneId={milestoneId} />
               </div>
             </div>
           </div>
