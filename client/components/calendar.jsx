@@ -4,20 +4,22 @@ import 'react-calendar/dist/Calendar.css';
 
 export default function ReactCalendar(props) {
   const [value, onChange] = useState(new Date());
-  const milestoneId = props.milestoneId;
+  const [milestone, setMilestone] = useState(props.milestone);
+
+  const milestoneId = props.milestone.milestoneId;
 
   const setDate = value => {
-    onChange(value);
-    const dueDate = { date: value.toISOString() };
+    const dueDate = value.toISOString();
 
     fetch(`api/deadline/${milestoneId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dueDate)
+      body: JSON.stringify({ ...milestone, dueDate })
     })
       .then(res => res.json())
       .then(data => {
-        onChange(data);
+        setMilestone(data);
+        onChange(data.milestoneId);
       })
       .catch(err => console.error('Error:', err));
   };
@@ -25,7 +27,6 @@ export default function ReactCalendar(props) {
   return (
     <div>
       <Calendar onChange={setDate} value={value} />
-      {/* <Calendar onChange={onChange} value={value} onClickDay={setDate} /> */}
     </div>
   );
 }
