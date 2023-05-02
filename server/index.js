@@ -270,6 +270,29 @@ app.patch('/api/milestones/:milestoneId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.patch('/api/deadline/:milestoneId', (req, res, next) => {
+  const milestoneId = Number(req.params.milestoneId);
+  const { dueDate } = req.body;
+  if (!milestoneId || milestoneId < 1) {
+    throw new ClientError(400, 'milestoneId is required and must be a positive integer');
+  }
+  const sql = `
+    update "milestones"
+    set    "dueDate" = $1
+    where  "milestoneId" = $2
+    returning *
+  `;
+  const params = [dueDate, milestoneId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(404, `cannot find milestone with milestoneId ${milestoneId}`);
+      }
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
 app.post('/api/auth/sign-in', (req, res, next) => {
   const { username, password } = req.body;
   if (!username || !password) {
