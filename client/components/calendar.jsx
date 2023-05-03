@@ -9,24 +9,43 @@ export default function ReactCalendar(props) {
   const milestoneId = props.milestone.milestoneId;
 
   const setDate = value => {
-    const dueDate = value.toISOString();
+    if (value !== null) {
+      const dueDate = value.toISOString();
 
-    fetch(`api/deadline/${milestoneId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...milestone, dueDate })
-    })
-      .then(res => res.json())
-      .then(data => {
-        setMilestone(data);
-        onChange(data.milestoneId);
+      fetch(`api/deadline/${milestoneId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...milestone, dueDate })
       })
-      .catch(err => console.error('Error:', err));
+        .then(res => res.json())
+        .then(data => {
+          setMilestone(data);
+          onChange(data.milestoneId);
+        })
+        .catch(err => console.error('Error:', err));
+    }
+    if (value === null) {
+      fetch(`api/deadline/${milestoneId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...milestone, dueDate: null })
+      })
+        .then(res => res.json())
+        .then(data => {
+          setMilestone(data);
+          onChange(data.milestoneId);
+        })
+        .catch(err => console.error('Error:', err));
+    }
   };
 
   return (
     <div>
-      <Calendar onChange={setDate} value={value} />
+      <Calendar onChange={onChange} value={value} />
+      <div className="mt-3 me-3">
+        <button type='button' className='btn btn-secondary btn-sm float-start' onClick={ () => { setDate(null); }}>Clear</button>
+        <button type='button' className='btn btn-primary btn-sm float-end' onClick={() => { setDate(value); }}>Confirm</button>
+      </div>
     </div>
   );
 }
