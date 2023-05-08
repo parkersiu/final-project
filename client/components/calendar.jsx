@@ -3,14 +3,18 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
 export default function ReactCalendar(props) {
-  const [value, onChange] = useState(new Date());
+  const [date, setDate] = useState(props.milestone.dueDate);
   const [milestone, setMilestone] = useState(props.milestone);
 
   const milestoneId = props.milestone.milestoneId;
 
-  const setDate = value => {
+  const dateHandler = d => {
+    setDate(new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000));
+  };
+
+  const fetchDate = value => {
     if (value !== null) {
-      const dueDate = value.toISOString();
+      const dueDate = value;
 
       fetch(`api/deadline/${milestoneId}`, {
         method: 'PATCH',
@@ -20,7 +24,7 @@ export default function ReactCalendar(props) {
         .then(res => res.json())
         .then(data => {
           setMilestone(data);
-          onChange(data.milestoneId);
+          dateHandler(new Date(data[0].dueDate));
         })
         .catch(err => console.error('Error:', err));
     }
@@ -33,7 +37,7 @@ export default function ReactCalendar(props) {
         .then(res => res.json())
         .then(data => {
           setMilestone(data);
-          onChange(data.milestoneId);
+          setDate(null);
         })
         .catch(err => console.error('Error:', err));
     }
@@ -41,10 +45,12 @@ export default function ReactCalendar(props) {
 
   return (
     <div>
-      <Calendar onChange={onChange} value={value} />
+      <Calendar onChange={fetchDate} value={date} />
       <div className="mt-3 me-3">
-        <button type='button' className='btn btn-secondary btn-sm float-start' onClick={ () => { setDate(null); }}>Clear</button>
-        <button type='button' className='btn btn-primary btn-sm float-end' onClick={() => { setDate(value); }}>Confirm</button>
+        <button type='button' className='btn btn-secondary btn-sm float-start' data-bs-dismiss="offcanvas"
+        onClick={ () => { fetchDate(null); }}>Clear</button>
+        <button type='button' className='btn btn-primary btn-sm float-end' data-bs-dismiss="offcanvas"
+        onClick={() => { fetchDate(date); }}>Confirm</button>
       </div>
     </div>
   );
