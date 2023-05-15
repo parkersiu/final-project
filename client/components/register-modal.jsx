@@ -147,9 +147,6 @@ export default function RegisterModal(props) {
               />
                   </span>
                 </OverlayTrigger>
-                <Form.Text id="password" muted>
-                  Your password must be 8-20 characters long.
-                </Form.Text>
               </Form.Group>
             </Modal.Body>
           </fieldset>

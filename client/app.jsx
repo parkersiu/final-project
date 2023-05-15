@@ -34,18 +34,18 @@ export default class App extends React.Component {
   renderPage() {
     const { route } = this.state;
     if (route.path === '') {
-      return <Projects setUser={this.setUser} />;
+      return <Projects setUser={this.setUser} userId={this.state.userId} />;
     }
     if (route.path === 'milestones') {
       const projectId = route.params.get('projectId');
-      return <Milestones projectId={projectId} setUser={this.setUser} />;
+      return <Milestones projectId={projectId} setUser={this.setUser} userId={this.state.userId} />;
     }
     if (route.path === 'view') {
       const projectId = route.params.get('projectId');
-      return <View projectId={projectId} setUser={this.setUser} />;
+      return <View projectId={projectId} setUser={this.setUser} userId={this.state.userId} />;
     }
     if (route.path === 'about') {
-      return <About />;
+      return <About userId={this.state.userId} />;
     }
     if (route.path === 'projects') {
       return <ProjectsList userId={this.state.userId} setUser={this.setUser} />;
