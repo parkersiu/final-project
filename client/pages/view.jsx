@@ -220,7 +220,7 @@ function ProjectView(props) {
 export default function View(props) {
   return (
     <div>
-      <Navbar setUser={props.setUser} />
+      <Navbar setUser={props.setUser} userId={props.userId} />
       <ProjectView projectId={props.projectId} />
     </div>
   );

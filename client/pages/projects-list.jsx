@@ -47,7 +47,7 @@ function Projects(props) {
 export default function ProjectsList(props) {
   return (
     <div>
-      <Navbar setUser={props.setUser} />
+      <Navbar setUser={props.setUser} userId={props.userId} />
       <Projects userId={props.userId} />
     </div>
   );

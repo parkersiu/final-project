@@ -6,7 +6,7 @@ export default function RegisterModal(props) {
   const [username, setUsername] = useState('demo@user.com');
   const [password, setPassword] = useState('demouserpw');
   const [validated, setValidated] = useState(false);
-  const { show, onClose, setToken, setUser } = props;
+  const { show, onClose, setToken, setUser, setLoggedIn } = props;
 
   const fetchRegister = newUser => {
     fetch('/api/auth/sign-up', {
@@ -46,6 +46,7 @@ export default function RegisterModal(props) {
       const response = await fetchLogin(user);
       setToken(response.signedToken);
       setUser(response.user.userId);
+      setLoggedIn(true);
     }
   };
 
@@ -147,9 +148,6 @@ export default function RegisterModal(props) {
               />
                   </span>
                 </OverlayTrigger>
-                <Form.Text id="password" muted>
-                  Your password must be 8-20 characters long.
-                </Form.Text>
               </Form.Group>
             </Modal.Body>
           </fieldset>

@@ -1,10 +1,10 @@
 import React from 'react';
 import Navbar from '../components/navbar';
 
-export default function About() {
+export default function About(props) {
   return (
     <div>
-      <Navbar />
+      <Navbar userId={props.userId} />
       <div className="d-flex align-items-center justify-content-center mt-3">
         <div className="text-center">
           <h1 className="display-1 fw-bold">About</h1>
