@@ -45,7 +45,7 @@ export default class App extends React.Component {
       return <View projectId={projectId} setUser={this.setUser} userId={this.state.userId} />;
     }
     if (route.path === 'about') {
-      return <About userId={this.state.userId} />;
+      return <About userId={this.state.userId} setUser={this.setUser} />;
     }
     if (route.path === 'projects') {
       return <ProjectsList userId={this.state.userId} setUser={this.setUser} />;
