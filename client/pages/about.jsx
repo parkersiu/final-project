@@ -4,7 +4,7 @@ import Navbar from '../components/navbar';
 export default function About(props) {
   return (
     <div>
-      <Navbar userId={props.userId} />
+      <Navbar userId={props.userId} setUser={props.setUser} />
       <div className="d-flex align-items-center justify-content-center mt-3">
         <div className="text-center">
           <h1 className="display-1 fw-bold">About</h1>
